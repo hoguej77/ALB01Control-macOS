@@ -12,6 +12,7 @@
 		5C40D7B8998BF0E77DB34FA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 61DDC1B198A731576235C523 /* README.md */; };
 		6F8CD496B557FC1085F4ADD7 /* ALB01Protocol in Frameworks */ = {isa = PBXBuildFile; productRef = 09B10582FC3C92B82AF72C84 /* ALB01Protocol */; };
 		8C0A404869E850E51A74603A /* RESEARCH.md in Resources */ = {isa = PBXBuildFile; fileRef = 24D90CA88C1C61BF8D1AB87F /* RESEARCH.md */; };
+		8FAFAC8B30AC99531B224847 /* LightingPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */; };
 		9D323727F46A7C680E9CC9AA /* ALB01ControlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8887907563AC9B7829BBA0 /* ALB01ControlApp.swift */; };
 		A36C29B7BB27EC29FA783A10 /* ALB01HID in Frameworks */ = {isa = PBXBuildFile; productRef = C0B80ACF4546A5BB5B0F46E5 /* ALB01HID */; };
 		BBF62E72576DB31AEFC444E9 /* ControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */; };
@@ -29,6 +30,7 @@
 		6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewModel.swift; sourceTree = "<group>"; };
 		742FDEA084D540A258EFA5CB /* ALB01Control.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ALB01Control.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DC655D7EFD0ED6F4816C3F9 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingPreset.swift; sourceTree = "<group>"; };
 		D96E9879E61ACF4E58A7285A /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		E3F4FFC515147BC06BABC6A9 /* RELEASE_NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASE_NOTES.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +62,7 @@
 			children = (
 				3B8887907563AC9B7829BBA0 /* ALB01ControlApp.swift */,
 				6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */,
+				D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */,
 			);
 			name = ALB01ControlApp;
 			path = Sources/ALB01ControlApp;
@@ -172,6 +175,7 @@
 			files = (
 				9D323727F46A7C680E9CC9AA /* ALB01ControlApp.swift in Sources */,
 				BBF62E72576DB31AEFC444E9 /* ControlViewModel.swift in Sources */,
+				8FAFAC8B30AC99531B224847 /* LightingPreset.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

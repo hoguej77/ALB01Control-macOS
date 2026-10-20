@@ -122,6 +122,21 @@ private struct ControlPanel: View {
 
     private var lights: some View {
         Form {
+            Section("Lighting presets") {
+                Picker("Preset", selection: $model.selectedPresetID) {
+                    ForEach(LightingPreset.builtIns) { Text($0.name).tag($0.id) }
+                }.disabled(model.busy)
+                Text(model.presetSummary).font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    Button("Apply preset") { model.applySelectedPreset() }.buttonStyle(.borderedProminent)
+                        .disabled(!model.controlsAvailable)
+                    Button("Save current to preset") { model.saveCurrentPreset() }
+                        .disabled(model.busy || model.syncing || model.calibrating)
+                    Button("Reset preset") { model.resetSelectedPreset() }.disabled(model.busy)
+                }
+                Text("DisplayWidget-style slots with adjustable macOS starter values—not ASUS factory values. Save captures the app’s settings; Reset changes only the saved preset. Apply stops Screen Sync/calibration and changes both lights.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
             Section("Front desk light") {
                 Toggle("Desk light", isOn: Binding(get: { model.frontOn }, set: { model.setPower($0) }))
                     .disabled(!model.controlsAvailable)
@@ -163,6 +178,17 @@ private struct ControlPanel: View {
                     model.scheduleRear()
                 }), supportsOpacity: false)
                 .disabled(model.settings.rearEffect == .off || model.settings.rearEffect == .spectrum)
+                HStack(spacing: 8) {
+                    ForEach(LightingPreset.standardColors, id: \.name) { swatch in
+                        Button {
+                            model.settings.rearColor = swatch.color
+                            model.scheduleRear()
+                        } label: {
+                            Circle().fill(Color(red: Double(swatch.color.red)/255, green: Double(swatch.color.green)/255, blue: Double(swatch.color.blue)/255))
+                                .frame(width: 20, height: 20).overlay(Circle().stroke(.gray, lineWidth: 1))
+                        }.buttonStyle(.plain).help(swatch.name).accessibilityLabel(swatch.name)
+                    }
+                }.disabled(model.settings.rearEffect == .off || model.settings.rearEffect == .spectrum)
                 Slider(value: $model.settings.rearBrightness, in: 0...100, step: 1, onEditingChanged: { editing in
                     model.editing = editing
                     if !editing { model.applyRear() }

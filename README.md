@@ -29,6 +29,17 @@ ASUS describes three physical lighting arrangements: the front desk/screen light
 
 The ALB01 is USB 5 V / 1 A (5 W maximum). ASUS documents a physical power/Aura button and a brightness/color-temperature roller; use **Refresh** beside Live readback after physical changes.
 
+## DisplayWidget-style presets
+
+The Lights tab includes **Reading, Game, Night View, Theater, Music, User Mode 1, and User Mode 2**, matching the slot names in ASUS's ALB01 DisplayWidget screenshot. The numeric settings are independently chosen, adjustable **macOS starter values**, not a claim of ASUS factory defaults.
+
+- Select a slot, then **Apply preset** to set the front and rear together. This stops Screen Sync/calibration first.
+- **Save current to preset** stores the current app settings in that slot, including front power state, brightness, temperature, rear effect, color, and intensity. It does not read an unknown rear hardware mode.
+- **Reset preset** restores that slot's starter values without changing the lights; click Apply when ready.
+- Nine standard color swatches provide one-click rear colors.
+- Music is purple breathing ambience, **not audio-reactive**; no microphone/audio permission is used.
+- Strobing and broader Armoury Crate effects are not implemented. These presets do not imply full Armoury Crate parity.
+
 ## Safe first use
 
 1. Connect the bar through a USB **data** path, not charge-only power.
@@ -105,7 +116,7 @@ open dist/ALB01Control.app
 
 The script produces an ad-hoc-signed local bundle, not a notarized release. Beta downloads disclose this limitation; a polished distribution should use Apple Developer signing/notarization. The checked-in Xcode project can be opened directly without XcodeGen. Maintainers can regenerate it from `project.yml` using XcodeGen.
 
-From a clean, committed checkout, `zsh Scripts/package-release.sh v0.3.0-beta.1` builds the app and creates matching app/source ZIPs, release notes, and checksums under `release-artifacts/`. The script refuses to overwrite an existing release directory. Build the release commit/tag you intend to publish; no credentials or signing certificates belong in the repository.
+From a clean, committed checkout, `zsh Scripts/package-release.sh v0.3.0-beta.2` builds the app and creates matching app/source ZIPs, release notes, and checksums under `release-artifacts/`. The script refuses to overwrite an existing release directory. Build the release commit/tag you intend to publish; no credentials or signing certificates belong in the repository.
 
 ## Protocol and test coverage
 

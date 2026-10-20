@@ -1,10 +1,10 @@
 # Validation status
 
-Release candidate: v0.3.0-beta.1 / app 0.3.0 (8), prepared 2026-10-19.
+Release candidate: v0.3.0-beta.2 / app 0.3.0 (9), prepared 2026-10-19.
 
 ## Completed locally
 
-- Swift package: 19 tests passed, zero failures (protocol 8, screen-color/memory-boundary checks 6, UI-state checks 5).
+- Swift package: 23 tests passed, zero failures (protocol 8, screen-color/memory-boundary checks 6, UI-state checks 5, preset checks 4).
 - Swift release build for arm64 with macOS 14 deployment target.
 - Native Xcode project Debug build with signing disabled.
 - Local app ad-hoc signature and Info.plist validation.
@@ -20,12 +20,20 @@ Build environment: installed Xcode beta with macOS 27 SDK on an Apple Silicon Ma
 - Installed build 0.3.0 (6) UI exercised off/on, brightness, and temperature with measured feedback.
 - Rear/direct command transport accepted packets. This is not visual confirmation.
 
+## Preset hardware/UI session (2026-10-19)
+
+- Installed build 9 connected to the same 3-LED ALB01 and verified front readback.
+- Saved existing front-off/rear-breathing app settings to User Mode 1 without sending a light-setting command.
+- Applied Reading: front readback confirmed 60.112% / 5008 K (integer-channel quantization of the 60% / 5000 K request); rear-off command accepted.
+- Applied saved User Mode 1: front-off readback confirmed, previous stored on-level restored, rear-breathing command accepted.
+- Rear visible output was not measured; these results do not establish optical verification.
+
 ## Not yet validated
 
-- Build 8 installed-app ScreenCaptureKit first-frame delivery, visible per-LED response, stop/restart, and unchanged front lamp during capture.
+- Build 9 installed-app ScreenCaptureKit first-frame delivery, visible per-LED response, stop/restart, and unchanged front lamp during capture.
 - Sleep/wake and physical disconnect/reconnect/KVM stress.
 - Long-duration 30/60 fps behavior.
 - Intel hardware and all deployment-target OS versions.
-- Remote GitHub Actions results, until a workflow actually runs.
+- Beta 2 remote GitHub Actions results, until its workflow actually runs. The preceding main revision passed after replacing a timing-sensitive async test with explicit synchronization.
 
 Do not promote this beta to a stable release based solely on unit tests. When reporting hardware problems, review diagnostic output before sharing and do not include private screen content.

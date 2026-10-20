@@ -10,6 +10,7 @@ Reviewed 2026-10-16. No third-party implementation code is incorporated.
 - [ALB01 Unlocker](https://github.com/UladzimirB-dev/Monitor-Lightbar-alb01-Unlocker/tree/3fd22929d73a84aae624b82c4ce1096addc198e0): Windows screen sampling and tray UX reference. Its hard-coded four LEDs and brightness-unlock claims are not used to override the discovered LED count or the verified front-lamp power budget. MIT reference.
 - [OpenRGB AsusMonitorController](https://github.com/CalcProgrammer1/OpenRGB/tree/master/Controllers/AsusMonitorController): protocol background only; no GPL implementation is copied.
 - [Apple ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit), [SCStreamDelegate](https://developer.apple.com/documentation/screencapturekit/scstreamdelegate), and [SCFrameStatus](https://developer.apple.com/documentation/screencapturekit/scframestatus): capture lifecycle and complete-frame handling.
+- [ASUS ALB01 DisplayWidget screenshot](https://dlcdnwebimgs.asus.com/files/media/BF0909DA-FEFF-4420-B071-71E7495E0C7E/v1/images/ADVANCED-SETTINGS.webp), inspected 2026-10-19: Reading, Game, Night View, Theater, Music, User Mode 1/2; front controls; static/breathing/strobing/color-cycle UI and standard color swatches. The screenshot does not specify all preset channel values. Our named slots use independent starter values; Music does not imply audio reactivity, and strobing is not implemented.
 
 ## Capabilities that remain unverified
 

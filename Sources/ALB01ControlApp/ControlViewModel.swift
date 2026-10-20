@@ -36,6 +36,8 @@ struct SavedSettings: Codable {
 @MainActor
 final class ControlViewModel: ObservableObject {
     @Published var settings = SavedSettings()
+    @Published var selectedPresetID = "reading"
+    @Published private(set) var presetOverrides: [String: LightingPreset] = [:]
     @Published private(set) var status = "Connecting to your light bar…"
     @Published private(set) var errorMessage: String?
     @Published private(set) var connected = false
@@ -69,6 +71,7 @@ final class ControlViewModel: ObservableObject {
     private var observers: [NSObjectProtocol] = []
     private let logger = Logger(subsystem: "local.alb01.control", category: "controller")
     private let settingsKey = "settings.v1"
+    private let presetsKey = "presets.v1"
     private let defaults: UserDefaults
     private var suspended = false
 
@@ -89,6 +92,75 @@ final class ControlViewModel: ObservableObject {
            let saved = try? JSONDecoder().decode(SavedSettings.self, from: data) {
             settings = saved
             settings.validate()
+        }
+        if let data = defaults.data(forKey: presetsKey),
+           let saved = try? JSONDecoder().decode([String: LightingPreset].self, from: data) {
+            let knownIDs = Set(LightingPreset.builtIns.map(\.id))
+            for (id, var preset) in saved where knownIDs.contains(id) && preset.id == id {
+                preset.validate()
+                presetOverrides[id] = preset
+            }
+        }
+    }
+
+    var selectedPreset: LightingPreset {
+        let fallback = LightingPreset.builtIns.first(where: { $0.id == selectedPresetID }) ?? LightingPreset.builtIns[0]
+        return presetOverrides[fallback.id] ?? fallback
+    }
+    var presetSummary: String {
+        let p = selectedPreset
+        let front = p.frontOn ? "\(Int(p.brightness.rounded()))% · \(Int(p.kelvin.rounded())) K" : "Off"
+        return "Desk: \(front) · Rear: \(p.rearEffect.rawValue). \(p.detail)"
+    }
+    func saveCurrentPreset() {
+        guard !busy, !syncing, !calibrating else { return }
+        var preset = selectedPreset
+        preset.frontOn = frontOn
+        preset.brightness = settings.brightness
+        preset.kelvin = settings.kelvin
+        preset.rearEffect = settings.rearEffect
+        preset.rearColor = settings.rearColor
+        preset.rearBrightness = settings.rearBrightness
+        preset.validate()
+        presetOverrides[preset.id] = preset
+        savePresets()
+        record("Saved current app settings to \(preset.name). No light-setting command sent.")
+    }
+    func resetSelectedPreset() {
+        guard !busy else { return }
+        presetOverrides[selectedPreset.id] = nil
+        savePresets()
+        record("Reset \(selectedPreset.name) to macOS starter values. Click Apply preset to change the lights.")
+    }
+    private func savePresets() {
+        if let data = try? JSONEncoder().encode(presetOverrides) { defaults.set(data, forKey: presetsKey) }
+    }
+    func applySelectedPreset() {
+        guard controlsAvailable else { return }
+        let preset = selectedPreset
+        rearDebounce?.cancel()
+        run {
+            try await self.authorize()
+            if self.syncing || self.calibrating { await self.endSync() }
+            // Preserve the preset's on-level even when it requests front Off.
+            self.settings.brightness = preset.brightness
+            self.settings.kelvin = preset.kelvin
+            let channels = ALB01Protocol.lampChannels(on: preset.frontOn, brightnessPercent: preset.brightness, kelvin: preset.kelvin)
+            self.acceptReadback(try await self.hid.setLamp(channels))
+            self.settings.rearEffect = preset.rearEffect
+            self.settings.rearColor = preset.rearColor
+            self.settings.rearBrightness = preset.rearBrightness
+            self.save()
+            let color = preset.rearColor.scaled(brightnessPercent: preset.rearBrightness)
+            do {
+                try await self.hid.setRearEffect(preset.rearEffect, color: color)
+            } catch {
+                self.rearStatus = "Preset only partly applied: front readback confirmed; rear command failed."
+                throw error
+            }
+            self.appliedRear = (preset.rearEffect, color)
+            self.rearStatus = "\(preset.name): rear command accepted by USB; visible output is not measured."
+            self.record("\(preset.name) applied · front readback confirmed · rear command accepted")
         }
     }
 
@@ -308,6 +380,9 @@ final class ControlViewModel: ObservableObject {
         rearDebounce?.cancel()
         rearDebounce = nil
         defaults.removeObject(forKey: settingsKey)
+        defaults.removeObject(forKey: presetsKey)
+        presetOverrides = [:]
+        selectedPresetID = "reading"
         // Remove the limited keys written by earlier prototype versions too.
         ["frontBrightness", "frontTemperature", "rearBrightness", "syncIntensity", "syncSmoothing", "syncFPS", "reverseLEDOrder", "uniformScreenSync"].forEach { defaults.removeObject(forKey: $0) }
         settings = SavedSettings(); activity = []

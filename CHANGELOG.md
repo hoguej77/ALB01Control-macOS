@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0-beta.2 — 2026-10-19
+
+- Added seven DisplayWidget-style preset slots: Reading, Game, Night View, Theater, Music, and two User Modes.
+- Added Apply, Save current, and Reset actions; saved presets persist independently of older preferences.
+- Explicitly label starter settings as macOS choices, not ASUS factory defaults. Music is ambient breathing, not audio-reactive.
+- Added nine rear color swatches.
+- Preset application stops capture/calibration before taking control; front writes retain verified readback and the 178-point channel budget.
+- Fixed the async serialization test's timing assumption; added four preset regressions (23 tests total).
+- Bundle version 0.3.0 (9). Screen Sync and recovery limitations remain as documented.
+
 ## 0.3.0-beta.1 — 2026-10-19
 
 - Added a regular tabbed window opened from the menu bar, with version, errors, help, settings, and diagnostics.

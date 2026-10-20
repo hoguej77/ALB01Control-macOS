@@ -19,7 +19,7 @@
     <key>CFBundleShortVersionString</key>
     <string>0.3.0</string>
     <key>CFBundleVersion</key>
-    <string>8</string>
+    <string>9</string>
     <key>NSScreenCaptureUsageDescription</key>
     <string>Match the rear light bar colors to your selected display. Screen images are processed locally, never saved or uploaded.</string>
     <key>LSMinimumSystemVersion</key>

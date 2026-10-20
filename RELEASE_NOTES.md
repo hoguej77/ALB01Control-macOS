@@ -1,14 +1,20 @@
-# ALB01Control for macOS — v0.3.0-beta.1
+# ALB01Control for macOS — v0.3.0-beta.2
 
 An independent, native Swift/SwiftUI controller for the ASUS ROG Aura Monitor Light Bar ALB01.
 
 ## Downloads
 
-- **ALB01Control-v0.3.0-beta.1-macos-arm64.zip** — Apple Silicon app, macOS 14+ deployment target. Extract and move the app to Applications.
-- **ALB01Control-v0.3.0-beta.1-source.zip** — matching source, Xcode project, tests, documentation, and MIT license. GitHub also provides tag-based source archives.
+- **ALB01Control-v0.3.0-beta.2-macos-arm64.zip** — Apple Silicon app, macOS 14+ deployment target. Extract and move the app to Applications.
+- **ALB01Control-v0.3.0-beta.2-source.zip** — matching source, Xcode project, tests, documentation, and MIT license. GitHub also provides tag-based source archives.
 - **SHA256SUMS.txt** — checksums for the two ZIPs.
 
-The app bundle identifies itself as 0.3.0 (8). This is a **beta**, not a stable or ASUS-endorsed release. It is ad-hoc signed and **not Apple-notarized**; macOS may block opening it. Review the code/checksums and README installation guidance before approving it. No Intel binary is included.
+The app bundle identifies itself as 0.3.0 (9). This is a **beta**, not a stable or ASUS-endorsed release. It is ad-hoc signed and **not Apple-notarized**; macOS may block opening it. Review the code/checksums and README installation guidance before approving it. No Intel binary is included.
+
+## New in beta 2
+
+Reading, Game, Night View, Theater, Music, User Mode 1, and User Mode 2 preset slots, with Apply/Save/Reset and nine standard rear colors. Slot names match ASUS's ALB01 DisplayWidget screenshot; numeric defaults are independently chosen macOS starter settings, not ASUS factory values. Music is ambient breathing, not audio-reactive. Strobing and full Armoury Crate parity are not included.
+
+This release also includes the deterministic async-test correction from main after beta 1.
 
 ## Included
 
@@ -20,7 +26,7 @@ The app bundle identifies itself as 0.3.0 (8). This is a **beta**, not a stable 
 
 ## Validation and known limitations
 
-- 19 automated tests pass; release Swift build and native Xcode project build pass locally.
+- 23 automated tests pass; release Swift build and native Xcode project build pass locally.
 - Previous attached-device testing verified VID/PID, HID usage, 65-byte reports, config, three discovered LEDs, front-lamp write/readback, off/restore, and brightness/temperature mapping.
 - **Live Screen Sync is not yet verified end-to-end.** macOS displayed permission enabled while the earlier app's preflight check returned denied. This build attempts the actual ScreenCaptureKit operation; that change still needs installed-app validation.
 - Rear commands have USB-acceptance evidence, not confirmed visual output or measured rear-state readback.
