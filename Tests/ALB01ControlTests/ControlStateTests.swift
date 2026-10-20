@@ -28,10 +28,28 @@ final class ControlStateTests: XCTestCase {
         defer { defaults.removePersistentDomain(forName: name) }
         let model = ControlViewModel(defaults: defaults)
         var count = 0
-        model.run { count += 1; try await Task.sleep(for: .milliseconds(100)) }
+        var releaseOperation: CheckedContinuation<Void, Never>?
+        model.run {
+            count += 1
+            await withCheckedContinuation { releaseOperation = $0 }
+        }
         XCTAssertTrue(model.busy)
+        let startedDeadline = ContinuousClock.now.advanced(by: .seconds(5))
+        while releaseOperation == nil && ContinuousClock.now < startedDeadline {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        guard let releaseOperation else {
+            XCTFail("The first operation did not start within the bounded deadline.")
+            return
+        }
+        // Attempt a second command while the first is explicitly suspended.
         model.run { count += 1 }
-        try? await Task.sleep(for: .milliseconds(150))
+        XCTAssertTrue(model.busy)
+        releaseOperation.resume()
+        let finishedDeadline = ContinuousClock.now.advanced(by: .seconds(5))
+        while model.busy && ContinuousClock.now < finishedDeadline {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
         XCTAssertEqual(count, 1)
         XCTAssertFalse(model.busy)
     }
