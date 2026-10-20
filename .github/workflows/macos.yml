@@ -1,0 +1,17 @@
+name: macOS checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: swift --version
+      - name: Tests (no hardware writes)
+        run: swift test
+      - name: Build local application
+        run: zsh Scripts/build-app.sh

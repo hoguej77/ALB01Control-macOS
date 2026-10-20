@@ -1,0 +1,48 @@
+name: ALB01Control
+options:
+  deploymentTarget:
+    macOS: "14.0"
+packages:
+  ALB01Modules:
+    path: .
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+targets:
+  ALB01Control:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/ALB01ControlApp
+      - path: README.md
+        buildPhase: resources
+      - path: CHANGELOG.md
+        buildPhase: resources
+      - path: LICENSE
+        buildPhase: resources
+      - path: RESEARCH.md
+        buildPhase: resources
+      - path: RELEASE_NOTES.md
+        buildPhase: resources
+      - path: VALIDATION.md
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.alb01.control
+        INFOPLIST_FILE: Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_APP_SANDBOX: NO
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - package: ALB01Modules
+        product: ALB01Protocol
+      - package: ALB01Modules
+        product: ALB01HID
+      - package: ALB01Modules
+        product: ALB01ScreenSync
+schemes:
+  ALB01Control:
+    build:
+      targets:
+        ALB01Control: all
