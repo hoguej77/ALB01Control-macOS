@@ -2,6 +2,16 @@
 
 Release candidate: v0.3.0-beta.2 / app 0.3.0 (9), prepared 2026-10-19.
 
+## Local 0.4.0 (12) preview — October 20
+
+- 30 automated tests pass, including validated exact entry, scene migration, and automation input guards.
+- Native Xcode Release build, Swift 6, optimization `-O`; extracted metadata contains five discoverable App Intents.
+- All five actions appeared in the actual macOS Shortcuts library. Desk Light Off failed before execution: the system could not obtain an Apple Team ID from the ad-hoc app. No valid Apple signing identity is installed. Siri is not verified.
+- Installed app connected to the three-LED ALB01 and read front-off state. Existing user-selected rear settings were preserved.
+- Dark/light appearance and keyboard navigation exercised. Manual narrow-window layout, Screen Sync optical output, and stress testing remain outstanding.
+
+The following sections preserve historical beta 2 results, not new verification of the preview.
+
 ## Completed locally
 
 - Swift package: 23 tests passed, zero failures (protocol 8, screen-color/memory-boundary checks 6, UI-state checks 5, preset checks 4).

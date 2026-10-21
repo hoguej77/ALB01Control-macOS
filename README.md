@@ -29,21 +29,35 @@ ASUS describes three physical lighting arrangements: the front desk/screen light
 
 The ALB01 is USB 5 V / 1 A (5 W maximum). ASUS documents a physical power/Aura button and a brightness/color-temperature roller; use **Refresh** beside Live readback after physical changes.
 
-## DisplayWidget-style presets
+## Mac lighting scenes
 
-The Lights tab includes **Reading, Game, Night View, Theater, Music, User Mode 1, and User Mode 2**, matching the slot names in ASUS's ALB01 DisplayWidget screenshot. The numeric settings are independently chosen, adjustable **macOS starter values**, not a claim of ASUS factory defaults.
+The 0.4.0 beta includes **Focus, Daylight, Evening, Cinema, Ambient, Custom 1, and Custom 2**. These are independently chosen, adjustable Mac lighting scenes. Existing stored scene identifiers and customized light values are preserved. Older 0.3.0 downloads retain the earlier PC-style names.
 
-- Select a slot, then **Apply preset** to set the front and rear together. This stops Screen Sync/calibration first.
-- **Save current to preset** stores the current app settings in that slot, including front power state, brightness, temperature, rear effect, color, and intensity. It does not read an unknown rear hardware mode.
-- **Reset preset** restores that slot's starter values without changing the lights; click Apply when ready.
+- Select a slot, then **Apply scene** to set the front and rear together. This stops Screen Sync/calibration first.
+- **Save current** stores the current app settings in that slot, including front power state, brightness, temperature, rear effect, color, and intensity. It does not read an unknown rear hardware mode.
+- **Reset** restores that slot's starter values without changing the lights; click Apply scene when ready.
 - Nine standard color swatches provide one-click rear colors.
-- Music is purple breathing ambience, **not audio-reactive**; no microphone/audio permission is used.
+- **Match desk warmth** creates a soft 20% solid backlight that complements the current desk-light warmth. It is an aesthetic sRGB palette, not a calibrated white-point measurement.
+- No audio-reactive mode is implemented; the app requests no microphone/audio permission.
 - Strobing and broader Armoury Crate effects are not implemented. These presets do not imply full Armoury Crate parity.
+
+## Siri and Shortcuts (0.4.0 preview)
+
+The native app exposes five Mac App Intent actions: Set Desk Light Power, Set Desk Light Brightness, Set Desk Light Warmth, Apply Lighting Scene, and Switch Off Desk and Ambient Lights.
+
+**Current limitation:** all five actions appear in macOS Shortcuts, but execution failed on the local ad-hoc build. The system rejected the app process because it could not obtain an Apple Team ID. No valid Apple signing identity is installed. Siri/Shortcuts control is experimental, not a working feature of this unsigned preview; ordinary lighting controls remain independent of it. A genuinely Apple-team-signed build and another end-to-end test are required. Do not fabricate a Team ID or weaken system protections.
+
+Open Shortcuts, create a shortcut, search for ALB01Control in the action library, configure an action, and save it with a short name such as **Desk Light Off**. Siri can run the saved shortcut by name when Siri is enabled on the Mac. Apple distinguishes these Mac actions from automatically provisioned App Shortcuts. See the [platform guidance](https://developer.apple.com/design/human-interface-guidelines/app-shortcuts).
+
+Actions open the app, use the same serialized controller as the UI, validate ranges, and wait for front-lamp readback. A disconnected/busy device returns an error instead of a success claim. Brightness and warmth actions turn the desk light on. Scene/all-off actions stop Screen Sync first.
+
+Use `Scripts/build-app.sh` to package the native Xcode Release app, including extracted App Intents metadata. A hand-made app bundle around a SwiftPM executable does not include this metadata.
+Set `ALB01_SIGN_IDENTITY` to an existing valid Apple code-signing identity to sign the local package; otherwise the script explicitly produces an ad-hoc preview. This does not notarize the app or establish that its actions execute successfully.
 
 ## Safe first use
 
 1. Connect the bar through a USB **data** path, not charge-only power.
-2. Open **ALB01Control**. Its regular window contains Lights, Screen Sync, Diagnostics, and Help & Settings tabs. The menu-bar item provides quick power and window access. Startup performs read-only discovery.
+2. Open **ALB01Control**. Its window contains Lighting studio, Screen Sync, Diagnostics, and Settings & about. The menu-bar item provides quick power and window access. Startup performs read-only discovery.
 3. Confirm Connection reports `0B05:1AC8`, `FF72/00A1`, and 65-byte input/output reports.
 4. The first control action writes back the already-read front-lamp state and verifies it. That check has no visible lamp change.
 5. Use the controls: Power/effect/color apply immediately; brightness sliders apply when released. The buttons repeat the current setting.

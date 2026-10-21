@@ -7,32 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B3F6AD6F6BB0CE27B18F085 /* LightBarMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B759C4A541597CA1BCDD43 /* LightBarMark.swift */; };
+		13F302C4BB84F1242907C878 /* StudioCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082C3E86CB28D8ED33C0527E /* StudioCommands.swift */; };
+		31C10CDC4ABE258EF5CF14AD /* LightingAutomation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E875FCD8B611FED5FCDA0B /* LightingAutomation.swift */; };
 		3F20634533574E4461A7469D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D96E9879E61ACF4E58A7285A /* LICENSE */; };
 		494F5B1B1CE7AA9D5C28B453 /* ALB01ScreenSync in Frameworks */ = {isa = PBXBuildFile; productRef = 5E05305DFAD8AEC325ED75CD /* ALB01ScreenSync */; };
+		4A62EC9FC27F2316CD20413C /* LightingIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9774E3D65E7C12EEAF6DBE /* LightingIntents.swift */; };
 		5C40D7B8998BF0E77DB34FA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 61DDC1B198A731576235C523 /* README.md */; };
+		6D89A10CDD92C8E221321D31 /* ExactLampValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC57B3D9FDAB41914841E944 /* ExactLampValue.swift */; };
 		6F8CD496B557FC1085F4ADD7 /* ALB01Protocol in Frameworks */ = {isa = PBXBuildFile; productRef = 09B10582FC3C92B82AF72C84 /* ALB01Protocol */; };
 		8C0A404869E850E51A74603A /* RESEARCH.md in Resources */ = {isa = PBXBuildFile; fileRef = 24D90CA88C1C61BF8D1AB87F /* RESEARCH.md */; };
 		8FAFAC8B30AC99531B224847 /* LightingPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */; };
 		9D323727F46A7C680E9CC9AA /* ALB01ControlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8887907563AC9B7829BBA0 /* ALB01ControlApp.swift */; };
 		A36C29B7BB27EC29FA783A10 /* ALB01HID in Frameworks */ = {isa = PBXBuildFile; productRef = C0B80ACF4546A5BB5B0F46E5 /* ALB01HID */; };
+		B91D354B0D754C0E69225E7E /* ControlDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9190C407D42D6F1C3A7A48 /* ControlDesign.swift */; };
 		BBF62E72576DB31AEFC444E9 /* ControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */; };
+		BD441EDB78A3AB0A7B653AF3 /* LightBarHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B67ACE8B87FEF290D69084 /* LightBarHero.swift */; };
 		C58D23C1E05436C3279DB2DD /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 9DC655D7EFD0ED6F4816C3F9 /* CHANGELOG.md */; };
 		E3A05ADD7DBAC2F6618779AA /* VALIDATION.md in Resources */ = {isa = PBXBuildFile; fileRef = 41E6C63F8063ED8F8CB0A743 /* VALIDATION.md */; };
 		E5B1A6548D0DD0A56A57DCBA /* RELEASE_NOTES.md in Resources */ = {isa = PBXBuildFile; fileRef = E3F4FFC515147BC06BABC6A9 /* RELEASE_NOTES.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00B759C4A541597CA1BCDD43 /* LightBarMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBarMark.swift; sourceTree = "<group>"; };
+		04B67ACE8B87FEF290D69084 /* LightBarHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBarHero.swift; sourceTree = "<group>"; };
+		082C3E86CB28D8ED33C0527E /* StudioCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCommands.swift; sourceTree = "<group>"; };
 		24D90CA88C1C61BF8D1AB87F /* RESEARCH.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RESEARCH.md; sourceTree = "<group>"; };
+		2B9774E3D65E7C12EEAF6DBE /* LightingIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingIntents.swift; sourceTree = "<group>"; };
 		3B8887907563AC9B7829BBA0 /* ALB01ControlApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ALB01ControlApp.swift; sourceTree = "<group>"; };
 		41E6C63F8063ED8F8CB0A743 /* VALIDATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = VALIDATION.md; sourceTree = "<group>"; };
 		4368BAB793D3D006A2F3D4B3 /* ALB01Control */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ALB01Control; path = .; sourceTree = SOURCE_ROOT; };
+		4C9190C407D42D6F1C3A7A48 /* ControlDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlDesign.swift; sourceTree = "<group>"; };
 		61DDC1B198A731576235C523 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewModel.swift; sourceTree = "<group>"; };
 		742FDEA084D540A258EFA5CB /* ALB01Control.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ALB01Control.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DC655D7EFD0ED6F4816C3F9 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		BC57B3D9FDAB41914841E944 /* ExactLampValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExactLampValue.swift; sourceTree = "<group>"; };
 		D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingPreset.swift; sourceTree = "<group>"; };
 		D96E9879E61ACF4E58A7285A /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		E3F4FFC515147BC06BABC6A9 /* RELEASE_NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASE_NOTES.md; sourceTree = "<group>"; };
+		F1E875FCD8B611FED5FCDA0B /* LightingAutomation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingAutomation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,8 +75,15 @@
 			isa = PBXGroup;
 			children = (
 				3B8887907563AC9B7829BBA0 /* ALB01ControlApp.swift */,
+				4C9190C407D42D6F1C3A7A48 /* ControlDesign.swift */,
 				6F1F3D3CA256C9D3A9574BC2 /* ControlViewModel.swift */,
+				BC57B3D9FDAB41914841E944 /* ExactLampValue.swift */,
+				04B67ACE8B87FEF290D69084 /* LightBarHero.swift */,
+				00B759C4A541597CA1BCDD43 /* LightBarMark.swift */,
+				F1E875FCD8B611FED5FCDA0B /* LightingAutomation.swift */,
+				2B9774E3D65E7C12EEAF6DBE /* LightingIntents.swift */,
 				D21D2D3C185EA668C0AEAF86 /* LightingPreset.swift */,
+				082C3E86CB28D8ED33C0527E /* StudioCommands.swift */,
 			);
 			name = ALB01ControlApp;
 			path = Sources/ALB01ControlApp;
@@ -174,8 +195,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D323727F46A7C680E9CC9AA /* ALB01ControlApp.swift in Sources */,
+				B91D354B0D754C0E69225E7E /* ControlDesign.swift in Sources */,
 				BBF62E72576DB31AEFC444E9 /* ControlViewModel.swift in Sources */,
+				6D89A10CDD92C8E221321D31 /* ExactLampValue.swift in Sources */,
+				BD441EDB78A3AB0A7B653AF3 /* LightBarHero.swift in Sources */,
+				0B3F6AD6F6BB0CE27B18F085 /* LightBarMark.swift in Sources */,
+				31C10CDC4ABE258EF5CF14AD /* LightingAutomation.swift in Sources */,
+				4A62EC9FC27F2316CD20413C /* LightingIntents.swift in Sources */,
 				8FAFAC8B30AC99531B224847 /* LightingPreset.swift in Sources */,
+				13F302C4BB84F1242907C878 /* StudioCommands.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

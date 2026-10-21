@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0-beta.1 — 2026-10-20
+
+- Rebuilt the window as Lighting Studio with a navigation rail, monitor/light-bar preview, clearer desk and ambient controls, and a light-bar menu icon.
+- Added System/Light/Dark appearance, keyboard navigation, validated numeric brightness/temperature entry, and persistent Jonathan Hogue credit.
+- Replaced PC-style starter scenes with Focus, Daylight, Evening, Cinema, Ambient, and two custom slots. Existing custom values are preserved.
+- Added Match desk warmth for a complementary, soft solid backlight. Breathing remains optional, not a music-reactive scene.
+- Added five experimental App Intent actions and native Xcode Release packaging with extracted metadata. Shortcuts discovers the actions, but the tested ad-hoc build cannot execute them because macOS requires an Apple Team ID. Siri is not ready in this build.
+- 30 automated tests pass locally. Screen Sync optical verification and recovery/stress checks remain outstanding. App version 0.4.0 (12).
+
 ## 0.3.0-beta.2 — 2026-10-19
 
 - Added seven DisplayWidget-style preset slots: Reading, Game, Night View, Theater, Music, and two User Modes.

@@ -35,8 +35,10 @@ struct SavedSettings: Codable {
 
 @MainActor
 final class ControlViewModel: ObservableObject {
+    static let shared = ControlViewModel()
     @Published var settings = SavedSettings()
     @Published var selectedPresetID = "reading"
+    @Published var selectedPage = "lights"
     @Published private(set) var presetOverrides: [String: LightingPreset] = [:]
     @Published private(set) var status = "Connecting to your light bar…"
     @Published private(set) var errorMessage: String?
@@ -79,6 +81,7 @@ final class ControlViewModel: ObservableObject {
         "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))"
     }
     var controlsAvailable: Bool { connected && !busy }
+    var rearStateKnown: Bool { appliedRear != nil }
     var directAvailable: Bool { controlsAvailable && (1...20).contains(ledCount ?? 0) }
     var lastReadText: String {
         guard let lamp = measuredLamp, let readAt else { return "No readback yet" }
@@ -95,10 +98,13 @@ final class ControlViewModel: ObservableObject {
         }
         if let data = defaults.data(forKey: presetsKey),
            let saved = try? JSONDecoder().decode([String: LightingPreset].self, from: data) {
-            let knownIDs = Set(LightingPreset.builtIns.map(\.id))
-            for (id, var preset) in saved where knownIDs.contains(id) && preset.id == id {
+            for base in LightingPreset.builtIns {
+                guard let stored = saved[base.id], stored.id == base.id else { continue }
+                var preset = LightingPreset(id: base.id, name: base.name, detail: base.detail,
+                    frontOn: stored.frontOn, brightness: stored.brightness, kelvin: stored.kelvin,
+                    rearEffect: stored.rearEffect, rearColor: stored.rearColor, rearBrightness: stored.rearBrightness)
                 preset.validate()
-                presetOverrides[id] = preset
+                presetOverrides[base.id] = preset
             }
         }
     }
@@ -110,7 +116,8 @@ final class ControlViewModel: ObservableObject {
     var presetSummary: String {
         let p = selectedPreset
         let front = p.frontOn ? "\(Int(p.brightness.rounded()))% · \(Int(p.kelvin.rounded())) K" : "Off"
-        return "Desk: \(front) · Rear: \(p.rearEffect.rawValue). \(p.detail)"
+        let description = presetOverrides[p.id] == nil ? p.detail : "Saved custom scene."
+        return "Desk: \(front) · Rear: \(p.rearEffect.rawValue). \(description)"
     }
     func saveCurrentPreset() {
         guard !busy, !syncing, !calibrating else { return }
@@ -139,29 +146,32 @@ final class ControlViewModel: ObservableObject {
         guard controlsAvailable else { return }
         let preset = selectedPreset
         rearDebounce?.cancel()
-        run {
-            try await self.authorize()
-            if self.syncing || self.calibrating { await self.endSync() }
-            // Preserve the preset's on-level even when it requests front Off.
-            self.settings.brightness = preset.brightness
-            self.settings.kelvin = preset.kelvin
-            let channels = ALB01Protocol.lampChannels(on: preset.frontOn, brightnessPercent: preset.brightness, kelvin: preset.kelvin)
-            self.acceptReadback(try await self.hid.setLamp(channels))
-            self.settings.rearEffect = preset.rearEffect
-            self.settings.rearColor = preset.rearColor
-            self.settings.rearBrightness = preset.rearBrightness
-            self.save()
-            let color = preset.rearColor.scaled(brightnessPercent: preset.rearBrightness)
-            do {
-                try await self.hid.setRearEffect(preset.rearEffect, color: color)
-            } catch {
-                self.rearStatus = "Preset only partly applied: front readback confirmed; rear command failed."
-                throw error
-            }
-            self.appliedRear = (preset.rearEffect, color)
-            self.rearStatus = "\(preset.name): rear command accepted by USB; visible output is not measured."
-            self.record("\(preset.name) applied · front readback confirmed · rear command accepted")
+        run { try await self.applyScene(preset) }
+    }
+
+    private func applyScene(_ preset: LightingPreset) async throws {
+        rearDebounce?.cancel()
+        try await self.authorize()
+        if self.syncing || self.calibrating { await self.endSync() }
+        // Preserve the preset's on-level even when it requests front Off.
+        self.settings.brightness = preset.brightness
+        self.settings.kelvin = preset.kelvin
+        let channels = ALB01Protocol.lampChannels(on: preset.frontOn, brightnessPercent: preset.brightness, kelvin: preset.kelvin)
+        self.acceptReadback(try await self.hid.setLamp(channels))
+        self.settings.rearEffect = preset.rearEffect
+        self.settings.rearColor = preset.rearColor
+        self.settings.rearBrightness = preset.rearBrightness
+        self.save()
+        let color = preset.rearColor.scaled(brightnessPercent: preset.rearBrightness)
+        do {
+            try await self.hid.setRearEffect(preset.rearEffect, color: color)
+        } catch {
+            self.rearStatus = "Preset only partly applied: front readback confirmed; rear command failed."
+            throw error
         }
+        self.appliedRear = (preset.rearEffect, color)
+        self.rearStatus = "\(preset.name): rear command accepted by USB; visible output is not measured."
+        self.record("\(preset.name) applied · front readback confirmed · rear command accepted")
     }
 
     func start() {
@@ -218,14 +228,82 @@ final class ControlViewModel: ObservableObject {
             defer { busy = false }
             do { try await operation() }
             catch {
-                if error is ALB01HIDError {
-                    connected = false; authorized = false
-                    await hid.invalidateConnection()
-                    if syncing { await sync.stop(); syncing = false; syncState = "Disconnected" }
-                }
-                record(error.localizedDescription, error: true)
+                await self.handleOperationError(error)
             }
         }
+    }
+
+    private func handleOperationError(_ error: Error) async {
+        if error is ALB01HIDError {
+            connected = false; authorized = false
+            await hid.invalidateConnection()
+            if syncing { await sync.stop(); syncing = false; syncState = "Disconnected" }
+        }
+        record(error.localizedDescription, error: true)
+    }
+
+    /// App Intents await this same controller and serialized report path as the UI.
+    /// This method never creates a second HID owner or reports success before readback.
+    func executeShortcut(_ action: LightingAutomationAction) async throws -> String {
+        try action.validate()
+        if !started { start() }
+        for _ in 0..<60 {
+            try Task.checkCancellation()
+            if controlsAvailable { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        guard controlsAvailable else { throw LightingAutomationError.unavailable }
+        busy = true
+        errorMessage = nil
+        defer { busy = false }
+        do {
+            try Task.checkCancellation()
+            try await authorize()
+            try Task.checkCancellation()
+            let response: String
+            switch action {
+            case .scene(let id):
+                guard let base = LightingPreset.builtIns.first(where: { $0.id == id }) else { throw LightingAutomationError.unknownScene }
+                selectedPresetID = id
+                try await applyScene(presetOverrides[id] ?? base)
+                response = "\(selectedPreset.name) applied. Desk readback confirmed; backlight command sent."
+            case .allOff:
+                rearDebounce?.cancel()
+                if syncing || calibrating { await endSync() }
+                acceptReadback(try await hid.setLamp(.init(cool: 0, warm: 0)))
+                try await hid.setRearEffect(.off, color: .init(0, 0, 0))
+                settings.rearEffect = .off
+                appliedRear = (.off, .init(0, 0, 0))
+                rearStatus = "Backlight off command sent."
+                save()
+                response = "Desk light off, confirmed by readback. Backlight off command sent."
+            case .power(let on):
+                let value = ALB01Protocol.lampChannels(on: on, brightnessPercent: settings.brightness, kelvin: settings.kelvin)
+                acceptReadback(try await hid.setLamp(value))
+                response = on ? "Desk light on, confirmed by readback." : "Desk light off, confirmed by readback."
+            case .brightness(let percent):
+                let value = ALB01Protocol.lampChannels(on: true, brightnessPercent: Double(percent), kelvin: settings.kelvin)
+                acceptReadback(try await hid.setLamp(value))
+                response = "Desk brightness is \(Int(settings.brightness.rounded())) percent, confirmed by readback."
+            case .temperature(let kelvin):
+                let value = ALB01Protocol.lampChannels(on: true, brightnessPercent: settings.brightness, kelvin: Double(kelvin))
+                acceptReadback(try await hid.setLamp(value))
+                response = "Desk temperature is \(Int(settings.kelvin.rounded())) Kelvin, confirmed by readback."
+            }
+            record(response)
+            return response
+        } catch {
+            await handleOperationError(error)
+            throw error
+        }
+    }
+
+    func matchAmbientToDesk() {
+        guard controlsAvailable, !syncing, !calibrating else { return }
+        settings.rearEffect = .staticColor
+        settings.rearColor = AmbientPalette.matchingDesk(kelvin: settings.kelvin)
+        settings.rearBrightness = 20
+        applyRear()
     }
 
     func reconnect() {
@@ -381,6 +459,7 @@ final class ControlViewModel: ObservableObject {
         rearDebounce = nil
         defaults.removeObject(forKey: settingsKey)
         defaults.removeObject(forKey: presetsKey)
+        defaults.removeObject(forKey: "appearance.v1")
         presetOverrides = [:]
         selectedPresetID = "reading"
         // Remove the limited keys written by earlier prototype versions too.

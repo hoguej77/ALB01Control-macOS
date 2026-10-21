@@ -26,19 +26,19 @@ struct LightingPreset: Codable, Equatable, Identifiable {
     }
 
     static let builtIns: [LightingPreset] = [
-        .init(id: "reading", name: "Reading", detail: "Neutral desk light with rear RGB off.",
+        .init(id: "reading", name: "Focus", detail: "Clear neutral desk light, with the backlight off.",
               frontOn: true, brightness: 60, kelvin: 5000, rearEffect: .off, rearColor: .init(255, 255, 255), rearBrightness: 40),
-        .init(id: "game", name: "Game", detail: "Low desk light with a rear spectrum cycle.",
-              frontOn: true, brightness: 30, kelvin: 4600, rearEffect: .spectrum, rearColor: .init(255, 0, 0), rearBrightness: 100),
-        .init(id: "night", name: "Night View", detail: "Dim warm desk light with gentle amber backlighting.",
+        .init(id: "game", name: "Daylight", detail: "Bright cool desk light with a soft neutral backlight.",
+              frontOn: true, brightness: 70, kelvin: 6000, rearEffect: .staticColor, rearColor: .init(235, 242, 255), rearBrightness: 20),
+        .init(id: "night", name: "Evening", detail: "Dim warm desk light with gentle amber backlighting.",
               frontOn: true, brightness: 10, kelvin: 2700, rearEffect: .staticColor, rearColor: .init(255, 100, 20), rearBrightness: 15),
-        .init(id: "theater", name: "Theater", detail: "Desk light off with low, steady neutral backlighting.",
-              frontOn: false, brightness: 20, kelvin: 4000, rearEffect: .staticColor, rearColor: .init(255, 255, 255), rearBrightness: 20),
-        .init(id: "music", name: "Music", detail: "Purple breathing ambience. Not audio-reactive; no microphone or audio capture.",
-              frontOn: false, brightness: 20, kelvin: 4000, rearEffect: .breathing, rearColor: .init(160, 50, 255), rearBrightness: 60),
-        .init(id: "user1", name: "User Mode 1", detail: "Save your current front and rear settings in this slot.",
+        .init(id: "theater", name: "Cinema", detail: "Desk light off with a subtle neutral backlight.",
+              frontOn: false, brightness: 20, kelvin: 4000, rearEffect: .staticColor, rearColor: .init(255, 255, 255), rearBrightness: 10),
+        .init(id: "music", name: "Ambient", detail: "Desk light off with a steady warm backlight.",
+              frontOn: false, brightness: 20, kelvin: 4000, rearEffect: .staticColor, rearColor: .init(255, 210, 160), rearBrightness: 25),
+        .init(id: "user1", name: "Custom 1", detail: "Save your current desk and ambient lighting here.",
               frontOn: true, brightness: 50, kelvin: 4600, rearEffect: .staticColor, rearColor: .init(64, 140, 255), rearBrightness: 50),
-        .init(id: "user2", name: "User Mode 2", detail: "A second customizable front-and-rear preset.",
+        .init(id: "user2", name: "Custom 2", detail: "A second custom desk-and-ambient scene.",
               frontOn: true, brightness: 30, kelvin: 2700, rearEffect: .staticColor, rearColor: .init(255, 100, 20), rearBrightness: 30),
     ]
 

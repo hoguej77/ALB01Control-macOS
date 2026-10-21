@@ -5,7 +5,7 @@ import ALB01Protocol
 final class PresetTests: XCTestCase {
     func testDisplayWidgetStyleSlotsAndSafeChannelBudget() {
         XCTAssertEqual(LightingPreset.builtIns.map(\.name),
-                       ["Reading", "Game", "Night View", "Theater", "Music", "User Mode 1", "User Mode 2"])
+                       ["Focus", "Daylight", "Evening", "Cinema", "Ambient", "Custom 1", "Custom 2"])
         XCTAssertEqual(Set(LightingPreset.builtIns.map(\.id)).count, 7)
         for p in LightingPreset.builtIns {
             let channels = ALB01Protocol.lampChannels(on: p.frontOn, brightnessPercent: p.brightness, kelvin: p.kelvin)

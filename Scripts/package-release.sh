@@ -3,7 +3,7 @@ set -euo pipefail
 
 root_dir="${0:A:h:h}"
 cd "$root_dir"
-release_version="${1:-v0.3.0-beta.2}"
+release_version="${1:-v0.4.0-beta.1}"
 if [[ ! "$release_version" =~ '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$' ]]; then
   print -u2 "Expected a version such as v0.3.0-beta.1."
   exit 1
