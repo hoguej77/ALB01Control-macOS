@@ -63,11 +63,11 @@ final class PresetTests: XCTestCase {
         defer { defaults.removePersistentDomain(forName: name) }
         let old = ControlViewModel(defaults: defaults)
         old.settings.brightness = 37
-        old.settings.reverse = true
+        old.settings.rearBrightness = 17
         old.save()
         let reloaded = ControlViewModel(defaults: defaults)
         XCTAssertEqual(reloaded.settings.brightness, 37)
-        XCTAssertTrue(reloaded.settings.reverse)
+        XCTAssertEqual(reloaded.settings.rearBrightness, 17)
         XCTAssertEqual(reloaded.selectedPreset.id, "reading")
         XCTAssertTrue(reloaded.presetOverrides.isEmpty)
     }

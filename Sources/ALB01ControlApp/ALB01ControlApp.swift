@@ -55,7 +55,7 @@ private struct MenuContents: View {
         Divider()
         Button(model.frontOn ? "Turn desk light off" : "Turn desk light on") { model.setPower(!model.frontOn) }
             .disabled(!model.controlsAvailable)
-        if model.syncing { Button("Stop Screen Sync") { model.stopSync() }.disabled(model.busy) }
+
         Divider()
         Button("Quit ALB01Control") { model.quit() }.keyboardShortcut("q").disabled(model.busy)
     }
@@ -69,7 +69,7 @@ private struct ControlPanel: View {
     @State private var showLicense = false
 
     private var pageTitle: String {
-        switch tab { case "sync": return "Screen Sync"; case "diagnostics": return "Device diagnostics"; case "help": return "Settings & about"; default: return "Lighting studio" }
+        switch tab { case "diagnostics": return "Device diagnostics"; case "help": return "Settings & about"; default: return "Lighting studio" }
     }
     var body: some View {
         HStack(spacing: 0) {
@@ -97,7 +97,6 @@ private struct ControlPanel: View {
                                 .frame(maxWidth: .infinity, alignment: .leading).padding(12).background(.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
                         }
                         switch tab {
-                        case "sync": screenSync
                         case "diagnostics": diagnostics
                         case "help": help
                         default: lights
@@ -139,7 +138,6 @@ private struct ControlPanel: View {
                 Text("CONTROL FOR macOS").font(.system(size: 12, weight: .semibold)).tracking(1.8).foregroundStyle(StudioTheme.muted)
             }.padding(.horizontal, 22).padding(.top, 26).padding(.bottom, 32)
             nav("Lighting studio", icon: "slider.horizontal.3", id: "lights")
-            nav("Screen Sync", icon: "display", id: "sync")
             nav("Diagnostics", icon: "waveform.path.ecg", id: "diagnostics")
             nav("Settings & about", icon: "gearshape", id: "help")
             Spacer()
@@ -181,7 +179,7 @@ private struct ControlPanel: View {
         VStack(spacing: 16) {
             LightBarHero(frontOn: model.frontOn, brightness: model.settings.brightness, kelvin: model.settings.kelvin,
                          connected: model.connected, ledCount: model.ledCount, effect: model.settings.rearEffect,
-                         rearColor: model.settings.rearColor, syncing: model.syncing, rearKnown: model.rearStateKnown)
+                         rearColor: model.settings.rearColor, rearKnown: model.rearStateKnown)
             ResponsiveColumns {
                 deskCard
                 auraCard
@@ -200,7 +198,7 @@ private struct ControlPanel: View {
                         .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
                     Spacer()
                     Button("Save current") { model.saveCurrentPreset() }.buttonStyle(StudioButtonStyle())
-                        .disabled(model.busy || model.syncing || model.calibrating)
+                        .disabled(model.busy)
                         .help("Save current app settings to the selected scene without changing the lights")
                     Button("Reset") { model.resetSelectedPreset() }.buttonStyle(StudioButtonStyle()).disabled(model.busy)
                     Button("Apply scene") { model.applySelectedPreset() }.buttonStyle(StudioButtonStyle(prominent: true)).disabled(!model.controlsAvailable)
@@ -246,7 +244,7 @@ private struct ControlPanel: View {
     }
 
     private var auraCard: some View {
-        ControlCard("Ambient light", subtitle: model.syncing ? "Following your Mac display" : "Rear illumination for your workspace", minimumHeight: 362) {
+        ControlCard("Ambient light", subtitle: "Rear illumination for your workspace", minimumHeight: 362) {
             HStack(spacing: 6) {
                 effectButton("Off", .off)
                 effectButton("Solid", .staticColor)
@@ -280,11 +278,11 @@ private struct ControlPanel: View {
                 Slider(value: $model.settings.rearBrightness, in: 0...100, onEditingChanged: { editing in model.editing = editing; if !editing { model.applyRear() } }).accessibilityLabel("Rear intensity")
             }.disabled(!colorAvailable)
             HStack {
-                Text(model.syncing || model.calibrating ? "Stop sync to change ambient lighting" : model.rearStatus).font(.system(size: 12)).foregroundStyle(StudioTheme.secondary).lineLimit(2)
+                Text(model.rearStatus).font(.system(size: 12)).foregroundStyle(StudioTheme.secondary).lineLimit(2)
                 Spacer()
                 Button("Apply") { model.applyRear() }.buttonStyle(StudioButtonStyle()).help("Apply ambient light settings")
             }
-        }.disabled(!model.controlsAvailable || model.syncing || model.calibrating)
+        }.disabled(!model.controlsAvailable)
     }
     private var colorAvailable: Bool { model.settings.rearEffect == .staticColor || model.settings.rearEffect == .breathing }
     private func rgb(_ c: ALB01Protocol.RGB) -> Color { Color(red: Double(c.red)/255, green: Double(c.green)/255, blue: Double(c.blue)/255) }
@@ -299,105 +297,6 @@ private struct ControlPanel: View {
     private func lampEditing(_ editing: Bool) {
         model.editing = editing
         if !editing { model.applyLamp() }
-    }
-
-    private var screenSync: some View {
-        VStack(spacing: 16) {
-            ControlCard("Bring your screen into the room", subtitle: "Your front desk light stays independent.") {
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(model.syncState).font(.system(size: 23, weight: .regular, design: .rounded))
-                        Text(model.syncing ? "Rear LEDs are following your selected display." : "Choose a display and color layout below.")
-                            .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                    }
-                    Spacer()
-                    Button(model.syncing || model.calibrating ? "Stop Screen Sync" : "Start Screen Sync") {
-                        model.syncing || model.calibrating ? model.stopSync() : model.startSync()
-                    }.buttonStyle(StudioButtonStyle(prominent: true)).disabled(!model.directAvailable)
-                }.padding(.vertical, 5)
-            }
-            ResponsiveColumns {
-                captureSetup
-                ledOutput
-            }
-            ControlCard("Screen access", subtitle: "Processed on your Mac. No images or audio are saved or uploaded.") {
-                HStack {
-                    Label(model.permissionGranted ? "Screen Recording available" : "Screen access not confirmed",
-                          systemImage: model.permissionGranted ? "checkmark.shield" : "lock")
-                        .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                    Spacer()
-                    Button("Request access") { model.requestCapturePermission() }.buttonStyle(StudioButtonStyle()).disabled(model.busy)
-                    Button("Refresh displays") { model.refreshDisplays() }.buttonStyle(StudioButtonStyle()).disabled(model.busy)
-                }
-                Link("Open macOS Screen Recording settings ↗", destination: URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
-                    .font(.system(size: 12))
-                if !model.permissionGranted {
-                    Text("If macOS already shows access enabled, try Start Screen Sync to check capture directly.")
-                        .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                }
-            }
-        }
-    }
-
-    private var captureSetup: some View {
-        ControlCard("Capture setup", subtitle: "Stop sync to change these settings.", minimumHeight: 350) {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text("Display").font(.system(size: 12))
-                        Picker("Display", selection: $model.settings.displayID) {
-                            Text("Choose a display").tag(UInt32?.none)
-                            ForEach(model.displays) { display in Text(model.displayName(display)).tag(UInt32?.some(display.id)) }
-                        }.labelsHidden()
-                    }
-                    Picker("Color layout", selection: $model.settings.uniform) {
-                        Text("\(model.ledCount ?? 0) LED zones").tag(false)
-                        Text("Uniform").tag(true)
-                    }.pickerStyle(.segmented).controlSize(.small)
-                    Toggle("Reverse LED order", isOn: $model.settings.reverse).font(.system(size: 12)).toggleStyle(.switch).controlSize(.small)
-                    ControlSlider(title: "Intensity", value: "\(Int(model.settings.intensity))%") {
-                        Slider(value: $model.settings.intensity, in: 0...100).accessibilityLabel("Screen Sync intensity")
-                    }
-                    ControlSlider(title: "Smoothing", value: "\(Int(model.settings.smoothing * 100))%") {
-                        Slider(value: $model.settings.smoothing, in: 0...0.9).accessibilityLabel("Screen Sync smoothing")
-                    }
-                    Picker("Capture rate", selection: $model.settings.fps) { Text("30 fps").tag(30); Text("60 fps").tag(60) }.controlSize(.small)
-                    Text("More smoothing softens color changes. A still screen may deliver fewer frames.")
-                        .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                }.disabled(model.busy || model.syncing || model.calibrating)
-    }
-
-    private var ledOutput: some View {
-        ControlCard("LED output", subtitle: "Sampled colors in physical LED order.", minimumHeight: 350) {
-                    HStack(spacing: 6) {
-                        if model.preview.isEmpty {
-                            ForEach(0..<min(max(model.ledCount ?? 0, 1), 20), id: \.self) { index in
-                                RoundedRectangle(cornerRadius: 7).fill(StudioTheme.background).frame(height: 68)
-                                    .overlay(Text("\(index + 1)").font(.system(size: 12, design: .monospaced)).foregroundStyle(StudioTheme.muted))
-                                    .overlay(RoundedRectangle(cornerRadius: 7).stroke(StudioTheme.line, lineWidth: 1))
-                            }
-                        } else {
-                            ForEach(Array(model.preview.enumerated()), id: \.offset) { index, c in
-                                RoundedRectangle(cornerRadius: 7).fill(rgb(c)).frame(height: 68)
-                                    .overlay(Text("\(index + 1)").font(.system(size: 12, design: .monospaced)).foregroundStyle(.white).shadow(color: .black, radius: 2))
-                            }
-                        }
-                    }.padding(.vertical, 10)
-                    HStack {
-                        Text("USB frames").foregroundStyle(StudioTheme.secondary)
-                        Spacer()
-                        Text("\(model.frames)").monospacedDigit()
-                    }.font(.system(size: 12))
-                    if let date = model.lastFrameAt {
-                        Text("Last frame \(date.formatted(date: .omitted, time: .standard))").font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                    }
-                    Divider().overlay(StudioTheme.line).padding(.vertical, 4)
-                    Button(model.calibrating ? "End calibration" : "Test LED order") {
-                        model.calibrating ? model.stopSync() : model.calibrate()
-                    }.buttonStyle(StudioButtonStyle()).disabled(!model.directAvailable || model.syncing)
-                    Text("Calibration sends red, green, then blue. Reverse the order if the bar’s left and right differ.")
-                        .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
-                    Text("On stop: restore this session’s last ambient setting, or turn the rear off if it is unknown.")
-                        .font(.system(size: 12)).foregroundStyle(StudioTheme.muted)
-                }
     }
 
     private var diagnostics: some View {
@@ -419,7 +318,7 @@ private struct ControlPanel: View {
                         Text("Light").tag("light")
                         Text("Dark").tag("dark")
                     }.pickerStyle(.segmented)
-                    Text("Keyboard: ⌘1 Lighting · ⌘2 Screen Sync · ⌘3 Diagnostics · ⌘, Settings")
+                    Text("Keyboard: ⌘1 Lighting · ⌘2 Diagnostics · ⌘, Settings")
                         .font(.system(size: 12)).foregroundStyle(StudioTheme.secondary)
                 }
                 ControlCard("Siri & Shortcuts · Experimental", subtitle: "Five native actions; Apple-signed build required on this Mac.") {
@@ -436,22 +335,22 @@ private struct ControlPanel: View {
                 }
                 ControlCard("Quick start", subtitle: "A deliberately safe hardware workflow.") {
                 Text("Connect the bar using a USB data cable. The app reads its configuration first. Your first change verifies the current lamp setting with a no-change write/readback, then applies your request.")
-                Text("Front controls illuminate the desk. Ambient light colors the wall. They can run together. Screen Sync takes over the rear LEDs until stopped.")
+                Text("Front controls illuminate the desk. Ambient light colors the wall. They can run together. Screen capture and display monitoring are not used.")
                 }
                 ControlCard("Troubleshooting") {
                 Text("Disconnected: bypass the KVM or hub, reconnect the data cable, and click Reconnect. The app retries read-only discovery every 3 seconds. ASUS specifies 5 V / 1 A USB power.")
-                Text("Screen Sync: click Request access, approve ALB01Control in macOS, and reopen if requested. Refresh the display list. Start reports Running only after the first complete frame is delivered. Protected content can appear black.")
+
                 Text("A USB write accepted by macOS does not verify the visible rear color. Only the front lamp has verified readback. Hardware rear-effect readback and firmware update are not implemented.")
                 }
                 ControlCard("Preferences and data", subtitle: "All settings are stored locally on this Mac.") {
                 Toggle("Launch at login", isOn: Binding(get: { model.loginEnabled }, set: { model.setLogin($0) })).disabled(model.busy)
                 Text("Settings stay in this Mac’s UserDefaults. Activity is kept in memory; operational messages may also appear in macOS Console. No telemetry or screen recordings are stored.").font(.caption)
-                Button("Erase saved app data…", role: .destructive) { confirmErase = true }.disabled(model.busy || model.syncing || model.calibrating)
+                Button("Erase saved app data…", role: .destructive) { confirmErase = true }.disabled(model.busy)
                 }
                 ControlCard("About ALB01Control · v\(model.version)", subtitle: "Created and maintained by Jonathan Hogue") {
                 Text("© 2026 Jonathan Hogue · Original app code licensed under MIT")
                     .font(.subheadline.weight(.semibold))
-                Text("Public beta. Screen Sync and sleep/KVM recovery still need full hardware validation. This build is not Apple-notarized.").font(.caption).foregroundStyle(.secondary)
+                Text("Public beta. Rear visual output and sleep/KVM recovery still need full hardware validation. This build is not Apple-notarized.").font(.caption).foregroundStyle(.secondary)
                 Button("Read MIT license…") { showLicense = true }.buttonStyle(StudioButtonStyle())
                 Link("Source code, releases, and help", destination: URL(string: "https://github.com/hoguej77/ALB01Control-macOS")!)
                 Text("Independent macOS software. Not made or endorsed by ASUS. Protocol implementation is original; research references are RIGStats and ALB01 Unlocker (MIT). OpenRGB was a protocol reference only.")

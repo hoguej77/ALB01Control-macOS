@@ -12,7 +12,7 @@ This is the implementation contract for one local preview pass, not a stable-rel
 | [Apple: Color](https://developer.apple.com/design/human-interface-guidelines/color) | Color variants for appearance and contrast preferences | Semantic light/dark colors and Increase Contrast handling |
 | [ASUS: ALB01](https://rog.asus.com/monitors/accessories/rog-aura-monitor-light-bar-alb01/) | Front, rear, and combined lighting; 2700–6500 K; DisplayWidget interface | Keep independent front/rear controls; preserve verified packet range |
 | [ASUS: DisplayWidget guide](https://rog.asus.com/us/support/faq/1050223/) | Function support depends on device model | Do not infer all Armoury Crate or monitor functions apply to ALB01 |
-| ALB01 DisplayWidget screenshot linked in RESEARCH.md | A Music slot exists; its audio implementation and exact preset values are not specified | Label our breathing preset Purple Breathing; retain its stored ID and customized settings |
+| ALB01 DisplayWidget screenshot linked in RESEARCH.md | A Music slot exists; its audio implementation and exact preset values are not specified | Replace the misleading Music activity with a steady Ambient scene; retain its stored ID and customized settings |
 | Local capture/mailbox inspection | LatestFrameMailbox already grants one drain and replaces pending frames | Preserve this existing performance behavior; no speculative queue rewrite |
 
 ## Fixed scope
@@ -33,7 +33,7 @@ Apple's [Mac App Shortcuts guidance](https://developer.apple.com/design/human-in
 
 Packaging now uses the native Xcode Release target so the app includes extracted App Intents metadata; a hand-made bundle around a SwiftPM binary omits it. The build refuses missing metadata. Runtime voice recognition and Shortcuts discovery require system testing, separately from compilation.
 
-Real audio-reactive capture, strobing, guessed firmware fields, and new packet modes are outside this pass. Existing Screen Sync stays experimental until an end-to-end hardware session proves its visible output and recovery.
+Real audio-reactive capture, strobing, guessed firmware fields, and new packet modes are outside this pass. Screen Sync is removed from the current product scope, not merely marked experimental.
 
 ## Acceptance and delivery
 
@@ -45,3 +45,7 @@ Real audio-reactive capture, strobing, guessed firmware fields, and new packet m
 - Measure primary/secondary text contrast in both palettes.
 - Install once after inspection, preserve a recoverable prior app, save screenshots and a source checkpoint.
 - Do not claim visual rear output, audio reactivity, or stable-release validation without evidence.
+
+## Final user scope change: lighting only
+
+On October 20 the user asked to remove the entire Screen Sync feature for now after reporting Safari video turning black with the earlier app open and returning after it quit. That observation is not a confirmed root cause. Build 14 removes ScreenCaptureKit and the capture module, display enumeration, capture permissions, rate/frame controls, calibration, and screen-specific settings. Existing lighting preferences and custom scenes remain; obsolete screen keys are ignored and omitted on save. The prior code is preserved in Git history for a separately researched, optimized, hardware-tested future feature. Binary dependency verification must show no ScreenCaptureKit link before reinstalling.

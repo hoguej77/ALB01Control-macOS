@@ -10,12 +10,10 @@ struct LightBarHero: View {
     let ledCount: Int?
     let effect: ALB01Protocol.AuraEffect
     let rearColor: ALB01Protocol.RGB
-    let syncing: Bool
     let rearKnown: Bool
     private var aura: Color { Color(red: Double(rearColor.red)/255, green: Double(rearColor.green)/255, blue: Double(rearColor.blue)/255) }
     private var warmth: Color { kelvin < 4000 ? .orange : Color(red: 0.75, green: 0.88, blue: 1) }
     private var effectName: String {
-        if syncing { return "Screen Sync" }
         if !connected || !rearKnown { return "Unconfirmed" }
         switch effect { case .off: return "Off"; case .staticColor: return "Static"; case .breathing: return "Breathing"; case .spectrum: return "Spectrum" }
     }
@@ -36,7 +34,7 @@ struct LightBarHero: View {
                 let w = min(geometry.size.width - 30, 300)
                 ZStack {
                     if connected && rearKnown && effect != .off {
-                        Ellipse().fill((effect == .spectrum ? StudioTheme.cyan : aura).opacity(0.3)).frame(width: w + 12, height: 90).blur(radius: 30).offset(y: -4)
+                        Ellipse().fill((effect == .spectrum ? StudioTheme.cyan : aura).opacity(0.3)).frame(width: w + 12, height: 90).offset(y: -4)
                     }
                     RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.035, green: 0.05, blue: 0.07))
                         .overlay(RoundedRectangle(cornerRadius: 7).stroke(LinearGradient(colors: [.white.opacity(0.19), .white.opacity(0.025)], startPoint: .top, endPoint: .bottom), lineWidth: 1))

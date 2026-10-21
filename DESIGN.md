@@ -1,6 +1,6 @@
 # Lighting Studio preview
 
-Local development build: 0.4.0 (12), October 20, 2026. The published beta 2 archives remain the earlier release.
+Release build: 0.4.0 (14), October 20, 2026. The published beta 2 archives remain the earlier release.
 
 The desktop layout uses a persistent navigation rail, a schematic monitor/light-bar preview, parallel front/rear controls, and a compact scene strip. Cyan identifies selection and primary actions; device connection uses a separate green indicator. The preview depicts app settings rather than measured optical output.
 
@@ -12,6 +12,8 @@ Navigation commands use Command-1 through Command-4; Settings uses Command-comma
 
 The purpose-based scenes and Match Desk Warmth action treat the rear LEDs as ambient lighting, rather than presenting cross-device ASUS Aura Sync capability. The bar remains ASUS hardware; the Mac experience is independent.
 
-Validation: 30 automated tests pass, including input, migration, and automation guards. The native optimized build includes five extracted discoverable actions. Dark/light UI and navigation were exercised. A native resize drag did not resize the review window, so a manual narrow-window check remains outstanding. Screen Sync's remaining hardware requirements are unchanged from VALIDATION.md.
+Validation: 27 automated tests pass, including input, migration, and automation guards. The native optimized build includes five extracted discoverable actions. Dark/light UI and navigation were exercised. A native resize drag did not resize the review window, so a manual narrow-window check remains outstanding. Screen Sync is removed, including its framework dependency and screen permission prompt. The app is focused on USB lighting control.
 
 All five actions were also discovered in the real Shortcuts action library. Running Desk Light Off failed at macOS process registration: the ad-hoc app has no Apple Team ID. No valid signing identity is installed. The UI and README label voice/Shortcuts control experimental; action execution and Siri are not verified.
+
+Screen Sync is deferred at the user's request after reported Safari video interference. No screen/display enumeration, capture-rate setting, frame meter, or calibration ships in build 14. Standard USB lamp readback is unrelated to display refresh and remains available. The implementation is recoverable from Git history.

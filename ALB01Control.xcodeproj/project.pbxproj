@@ -11,7 +11,6 @@
 		13F302C4BB84F1242907C878 /* StudioCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082C3E86CB28D8ED33C0527E /* StudioCommands.swift */; };
 		31C10CDC4ABE258EF5CF14AD /* LightingAutomation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E875FCD8B611FED5FCDA0B /* LightingAutomation.swift */; };
 		3F20634533574E4461A7469D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D96E9879E61ACF4E58A7285A /* LICENSE */; };
-		494F5B1B1CE7AA9D5C28B453 /* ALB01ScreenSync in Frameworks */ = {isa = PBXBuildFile; productRef = 5E05305DFAD8AEC325ED75CD /* ALB01ScreenSync */; };
 		4A62EC9FC27F2316CD20413C /* LightingIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9774E3D65E7C12EEAF6DBE /* LightingIntents.swift */; };
 		5C40D7B8998BF0E77DB34FA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 61DDC1B198A731576235C523 /* README.md */; };
 		6D89A10CDD92C8E221321D31 /* ExactLampValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC57B3D9FDAB41914841E944 /* ExactLampValue.swift */; };
@@ -56,7 +55,6 @@
 			files = (
 				6F8CD496B557FC1085F4ADD7 /* ALB01Protocol in Frameworks */,
 				A36C29B7BB27EC29FA783A10 /* ALB01HID in Frameworks */,
-				494F5B1B1CE7AA9D5C28B453 /* ALB01ScreenSync in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,7 +129,6 @@
 			packageProductDependencies = (
 				09B10582FC3C92B82AF72C84 /* ALB01Protocol */,
 				C0B80ACF4546A5BB5B0F46E5 /* ALB01HID */,
-				5E05305DFAD8AEC325ED75CD /* ALB01ScreenSync */,
 			);
 			productName = ALB01Control;
 			productReference = 742FDEA084D540A258EFA5CB /* ALB01Control.app */;
@@ -399,10 +396,6 @@
 		09B10582FC3C92B82AF72C84 /* ALB01Protocol */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ALB01Protocol;
-		};
-		5E05305DFAD8AEC325ED75CD /* ALB01ScreenSync */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ALB01ScreenSync;
 		};
 		C0B80ACF4546A5BB5B0F46E5 /* ALB01HID */ = {
 			isa = XCSwiftPackageProductDependency;

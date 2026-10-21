@@ -57,7 +57,7 @@ struct ApplyMacLightingSceneIntent: AppIntent {
 }
 struct SwitchOffLightsIntent: AppIntent {
     static let title: LocalizedStringResource = "Switch Off Desk and Ambient Lights"
-    static let description = IntentDescription("Stop Screen Sync and turn off both parts of your ALB01 light bar.")
+    static let description = IntentDescription("Turn off both parts of your ALB01 light bar.")
     static let openAppWhenRun = true
     @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
         let message = try await ControlViewModel.shared.executeShortcut(.allOff)

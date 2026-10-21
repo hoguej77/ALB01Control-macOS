@@ -1,6 +1,16 @@
 # Validation status
 
-Release candidate: v0.3.0-beta.2 / app 0.3.0 (9), prepared 2026-10-19.
+Current release: v0.4.0-beta.2 / app 0.4.0 (14), October 20, 2026.
+
+## Lighting-only scope
+
+- Screen Sync removed: no capture engine, ScreenCaptureKit package dependency, display enumeration, frame/rate UI, calibration, or screen permission prompt.
+- 27 automated tests cover retained lighting/protocol safety, serialization, scenes, numeric entry, automation input guards, and migration that drops obsolete screen keys without losing lighting values.
+- Prior to reinstall, live hardware enumeration reported 0B05:1AC8, FF72/00A1, 65-byte input/output reports, three LEDs, and lamp 39/66; writing the identical 39/66 channels passed readback.
+- User reported Safari video returning after the previous app quit. Root cause and post-removal long-running Safari behavior are not verified.
+- Voice automation remains blocked by missing Apple team signing. Optical rear output, sleep/KVM recovery, narrow layout, and broad OS compatibility remain unverified.
+
+The sections below preserve historical results; Screen Sync is not an outstanding feature to validate in this release.
 
 ## Local 0.4.0 (12) preview — October 20
 

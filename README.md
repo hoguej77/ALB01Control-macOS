@@ -2,7 +2,7 @@
 
 ALB01Control is a native macOS menu-bar controller for the ASUS ROG Aura Monitor Light Bar (ALB01). It talks to the light bar directly through macOS IOKit HID—no Python runtime, driver, Armoury Crate, or network service.
 
-**Beta software:** front-lamp controls have hardware-readback validation, but live Screen Sync, visible rear effects, and reconnect/sleep behavior are not fully validated. Do not treat this as a stable or official ASUS release.
+**Beta software:** front-lamp controls have hardware-readback validation, but visible rear effects and reconnect/sleep behavior are not fully validated. Do not treat this as a stable or official ASUS release.
 
 ## Download and install
 
@@ -11,7 +11,7 @@ Use the **Releases** section of this repository for the Apple Silicon (`arm64`) 
 1. Extract the app ZIP and move `ALB01Control.app` to Applications.
 2. Open it and connect your ALB01 through a USB data cable.
 3. This beta is ad-hoc signed, **not Developer ID signed or notarized**. macOS may block it. Review the source and release checksum before deciding whether to use macOS's per-app **Open Anyway** option in Privacy & Security. Do not disable Gatekeeper globally. Building from source is also supported.
-4. Screen Sync additionally requires Screen Recording permission. It processes display colors locally and captures no audio.
+4. Screen Sync is removed from this version. No Screen Recording permission is needed or requested. You may revoke any permission granted to an older version.
 
 See [release notes](RELEASE_NOTES.md) and [validation status](VALIDATION.md) before installing.
 
@@ -25,7 +25,6 @@ ASUS describes three physical lighting arrangements: the front desk/screen light
 | --- | --- | --- |
 | Front desk light | Power, 1–100% brightness, 2700–6500 K | Each change reads the channels back from the device. |
 | Rear Aura RGB | Off, static, breathing, spectrum, color, brightness | HID writes are allowed only after the safety check. |
-| Screen Sync | Per-LED/uniform, intensity, smoothing, 30/60 fps, calibration | The app counts direct HID frames delivered. |
 
 The ALB01 is USB 5 V / 1 A (5 W maximum). ASUS documents a physical power/Aura button and a brightness/color-temperature roller; use **Refresh** beside Live readback after physical changes.
 
@@ -33,7 +32,7 @@ The ALB01 is USB 5 V / 1 A (5 W maximum). ASUS documents a physical power/Aura b
 
 The 0.4.0 beta includes **Focus, Daylight, Evening, Cinema, Ambient, Custom 1, and Custom 2**. These are independently chosen, adjustable Mac lighting scenes. Existing stored scene identifiers and customized light values are preserved. Older 0.3.0 downloads retain the earlier PC-style names.
 
-- Select a slot, then **Apply scene** to set the front and rear together. This stops Screen Sync/calibration first.
+- Select a slot, then **Apply scene** to set the front and rear together.
 - **Save current** stores the current app settings in that slot, including front power state, brightness, temperature, rear effect, color, and intensity. It does not read an unknown rear hardware mode.
 - **Reset** restores that slot's starter values without changing the lights; click Apply scene when ready.
 - Nine standard color swatches provide one-click rear colors.
@@ -49,7 +48,7 @@ The native app exposes five Mac App Intent actions: Set Desk Light Power, Set De
 
 Open Shortcuts, create a shortcut, search for ALB01Control in the action library, configure an action, and save it with a short name such as **Desk Light Off**. Siri can run the saved shortcut by name when Siri is enabled on the Mac. Apple distinguishes these Mac actions from automatically provisioned App Shortcuts. See the [platform guidance](https://developer.apple.com/design/human-interface-guidelines/app-shortcuts).
 
-Actions open the app, use the same serialized controller as the UI, validate ranges, and wait for front-lamp readback. A disconnected/busy device returns an error instead of a success claim. Brightness and warmth actions turn the desk light on. Scene/all-off actions stop Screen Sync first.
+Actions open the app, use the same serialized controller as the UI, validate ranges, and wait for front-lamp readback. A disconnected/busy device returns an error instead of a success claim. Brightness and warmth actions turn the desk light on.
 
 Use `Scripts/build-app.sh` to package the native Xcode Release app, including extracted App Intents metadata. A hand-made app bundle around a SwiftPM executable does not include this metadata.
 Set `ALB01_SIGN_IDENTITY` to an existing valid Apple code-signing identity to sign the local package; otherwise the script explicitly produces an ad-hoc preview. This does not notarize the app or establish that its actions execute successfully.
@@ -57,26 +56,18 @@ Set `ALB01_SIGN_IDENTITY` to an existing valid Apple code-signing identity to si
 ## Safe first use
 
 1. Connect the bar through a USB **data** path, not charge-only power.
-2. Open **ALB01Control**. Its window contains Lighting studio, Screen Sync, Diagnostics, and Settings & about. The menu-bar item provides quick power and window access. Startup performs read-only discovery.
+2. Open **ALB01Control**. Its window contains Lighting studio, Diagnostics, and Settings & about. The menu-bar item provides quick power and window access. Startup performs read-only discovery.
 3. Confirm Connection reports `0B05:1AC8`, `FF72/00A1`, and 65-byte input/output reports.
 4. The first control action writes back the already-read front-lamp state and verifies it. That check has no visible lamp change.
 5. Use the controls: Power/effect/color apply immediately; brightness sliders apply when released. The buttons repeat the current setting.
 
-The app does not seize the HID device. Authorization is tied to the registry instance of the USB connection. A sleep/wake, KVM, cable, or hub failure invalidates it. Read-only reconnection retries every three seconds; Screen Sync requires an explicit restart. The app refuses ambiguous multiple-bar connections.
+The app does not seize the HID device. Authorization is tied to the registry instance of the USB connection. A sleep/wake, KVM, cable, or hub failure invalidates it. Read-only USB reconnection retries every three seconds. The app refuses ambiguous multiple-bar connections.
 
-## Screen Sync
+## Lighting only — no screen capture
 
-Screen Sync drives **only the rear Aura RGB LEDs**; the desk light remains independent.
+Screen Sync, screen-color sampling, display selection, frame counters, capture-rate options, and calibration were removed in 0.4.0 (14). The app does not link ScreenCaptureKit, request Screen Recording permission, enumerate displays, inspect Safari, or track monitor refresh rate. Its three-second readback checks only the USB light bar, not the screen or GPU.
 
-1. Click **Request access** on the Screen Sync tab. Enable **Screen Recording** for ALB01Control in System Settings → Privacy & Security → Screen & System Audio Recording, then quit/reopen if macOS requests it.
-2. Click **Refresh**. If macOS shows access enabled but the indicator disagrees, Start Sync attempts the actual ScreenCaptureKit operation and reports the result. Development builds can require permission renewal after replacement.
-3. Select a display. The Neo G9 is 5120×1440, but capture is intentionally 320×90 BGRA: only color zones are needed, not full-resolution video.
-4. Run **Test LED order**. Red → green → blue should appear left-to-right. Click **End calibration**, enable Reverse LED Order if needed, then test again.
-5. Start at 30 fps. After the frame counter rises and output is stable, optionally try 60 fps.
-
-Per-LED mode divides the screen horizontally by the discovered LED count. Uniform mode sends the same average color to each LED. Smoothing retains a portion of the previous sample to reduce flicker; intensity proportionally scales RGB without clipping. Stop before changing sampling settings. Stopping sync restores the last Aura effect successfully sent by the current app session; if it has not sent one, it turns the rear LEDs off. The app cannot restore an unknown physical rear mode. Rear controls are disabled while sync or calibration owns the LEDs.
-
-Running means at least one complete capture frame was accepted by the HID transport. The swatches show the colors sent, and the counter updates four times per second. A static screen may not generate frames at the maximum capture rate; protected content may be black. Capture errors are reported, and a four-second first-frame timeout prevents a false Running status.
+The user reported Safari video turning black while the earlier app was open and returning after it quit. This is evidence of an interaction, not a verified root cause. The capture implementation remains available in Git history for a separately researched and profiled future version; it is not shipped as a hidden toggle.
 
 ## Help, data, and recovery
 
@@ -124,13 +115,13 @@ swift run alb01-diagnostics --verify-writeback --rear-acceptance-sequence
 
 ```zsh
 swift test
-./Scripts/build-app.sh
+zsh Scripts/build-app.sh
 open dist/ALB01Control.app
 ```
 
 The script produces an ad-hoc-signed local bundle, not a notarized release. Beta downloads disclose this limitation; a polished distribution should use Apple Developer signing/notarization. The checked-in Xcode project can be opened directly without XcodeGen. Maintainers can regenerate it from `project.yml` using XcodeGen.
 
-From a clean, committed checkout, `zsh Scripts/package-release.sh v0.3.0-beta.2` builds the app and creates matching app/source ZIPs, release notes, and checksums under `release-artifacts/`. The script refuses to overwrite an existing release directory. Build the release commit/tag you intend to publish; no credentials or signing certificates belong in the repository.
+From a clean, committed checkout, `zsh Scripts/package-release.sh v0.4.0-beta.1` builds the app and creates matching app/source ZIPs, release notes, and checksums under `release-artifacts/`. The script refuses to overwrite an existing release directory. Build the release commit/tag you intend to publish; no credentials or signing certificates belong in the repository.
 
 ## Protocol and test coverage
 
@@ -143,7 +134,7 @@ From a clean, committed checkout, `zsh Scripts/package-release.sh v0.3.0-beta.2`
 - `EC3501000001000001 COOL WARM` front write, capped at 178 total;
 - static, breathing, spectrum, direct mode, and max-20 LED direct frames.
 
-Unit tests check packet size/prefixes, parser offsets, brightness mapping, frame limits, and proportional RGB. Hardware verification has confirmed discovery, config/LED count, lamp readback, no-change write/readback, Off/readback/restore, 50%/4600 K readback, and direct-frame acceptance. Screen capture requires the user’s macOS permission.
+Unit tests check packet size/prefixes, parser offsets, brightness mapping, frame limits, and proportional RGB. Hardware verification has confirmed discovery, config/LED count, lamp readback, no-change write/readback, Off/readback/restore, 50%/4600 K readback, and direct-frame acceptance. No screen capture is included.
 
 ## GitHub readiness
 

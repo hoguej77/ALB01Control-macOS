@@ -19,9 +19,8 @@ struct StudioCommands: Commands {
         }
         CommandMenu("Navigate") {
             Button("Lighting Studio") { show("lights") }.keyboardShortcut("1")
-            Button("Screen Sync") { show("sync") }.keyboardShortcut("2")
-            Button("Diagnostics") { show("diagnostics") }.keyboardShortcut("3")
-            Button("Settings & About") { show("help") }.keyboardShortcut("4")
+            Button("Diagnostics") { show("diagnostics") }.keyboardShortcut("2")
+            Button("Settings & About") { show("help") }.keyboardShortcut("3")
             Divider()
             Button("Refresh Device Readback") { model.refreshReadback() }
                 .keyboardShortcut("r").disabled(!model.controlsAvailable)

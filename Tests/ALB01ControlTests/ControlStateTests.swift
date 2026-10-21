@@ -61,14 +61,14 @@ final class ControlStateTests: XCTestCase {
         defer { defaults.removePersistentDomain(forName: name) }
         let model = ControlViewModel(defaults: defaults)
         model.settings.rearEffect = .breathing
-        model.settings.reverse = true
+        model.settings.rearBrightness = 17
         model.save()
         model.acceptReadback(.init(cool: 12, warm: 20))
         model.eraseSettings()
         XCTAssertNil(defaults.data(forKey: "settings.v1"))
         XCTAssertEqual(model.measuredLamp, .init(cool: 12, warm: 20))
         XCTAssertFalse(model.busy)
-        XCTAssertFalse(model.settings.reverse)
+        XCTAssertEqual(model.settings.rearBrightness, 100)
     }
 
     @MainActor
@@ -86,15 +86,13 @@ final class ControlStateTests: XCTestCase {
         XCTAssertTrue(model.status.contains("No light-setting command sent"))
     }
 
-    func testSavedNumbersAreClampedAndFPSValidated() {
+    func testSavedNumbersAreClamped() {
         var saved = SavedSettings()
-        saved.brightness = .nan; saved.kelvin = 9000; saved.fps = 400
-        saved.smoothing = .infinity; saved.intensity = -1
+        saved.brightness = .nan; saved.kelvin = 9000
+        saved.rearBrightness = .infinity
         saved.validate()
         XCTAssertEqual(saved.brightness, 60)
         XCTAssertEqual(saved.kelvin, 6500)
-        XCTAssertEqual(saved.fps, 30)
-        XCTAssertEqual(saved.smoothing, 0.2)
-        XCTAssertEqual(saved.intensity, 0)
+        XCTAssertEqual(saved.rearBrightness, 100)
     }
 }

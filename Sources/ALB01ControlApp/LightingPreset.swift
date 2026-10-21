@@ -1,8 +1,8 @@
 import Foundation
 import ALB01Protocol
 
-/// DisplayWidget-style slots with independently chosen macOS starter settings.
-/// Names follow ASUS's ALB01 screenshot; values are not claimed as factory data.
+/// Mac-focused activity scenes with independently chosen starter settings.
+/// Persistent IDs preserve older custom values; these are not ASUS factory presets.
 struct LightingPreset: Codable, Equatable, Identifiable {
     let id: String
     let name: String

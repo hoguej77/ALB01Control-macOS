@@ -15,6 +15,10 @@ xcodebuild -project ALB01Control.xcodeproj -scheme ALB01Control \
 
 built_app="$build_dir/Build/Products/Release/ALB01Control.app"
 app_path="$root_dir/dist/ALB01Control.app"
+if otool -L "$built_app/Contents/MacOS/ALB01Control" | /usr/bin/grep -q ScreenCaptureKit; then
+  print -u2 "Screen capture must not be linked into this lighting-only app."
+  exit 1
+fi
 if [[ ! -d "$built_app/Contents/Resources/Metadata.appintents" ]]; then
   print -u2 "App Intents metadata is missing; refusing to package an incomplete app."
   exit 1

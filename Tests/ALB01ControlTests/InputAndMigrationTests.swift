@@ -3,6 +3,30 @@ import XCTest
 import ALB01Protocol
 
 final class InputAndMigrationTests: XCTestCase {
+    @MainActor
+    func testRemovedScreenSettingsDoNotDiscardSavedLighting() throws {
+        let suite = "CaptureRemovalTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let legacy: [String: Any] = ["brightness": 37, "kelvin": 4100,
+            "rearEffect": "breathing", "rearColor": ["red": 11, "green": 22, "blue": 33],
+            "rearBrightness": 44, "displayID": 123, "uniform": true, "reverse": true,
+            "intensity": 90, "smoothing": 0.4, "fps": 60]
+        defaults.set(try JSONSerialization.data(withJSONObject: legacy), forKey: "settings.v1")
+        let model = ControlViewModel(defaults: defaults)
+        XCTAssertEqual(model.settings.brightness, 37)
+        XCTAssertEqual(model.settings.kelvin, 4100)
+        XCTAssertEqual(model.settings.rearBrightness, 44)
+        XCTAssertEqual(model.settings.rearEffect, .breathing)
+        XCTAssertEqual(model.settings.rearColor, .init(11, 22, 33))
+        model.save()
+        let saved = try XCTUnwrap(try JSONSerialization.jsonObject(with: XCTUnwrap(defaults.data(forKey: "settings.v1"))) as? [String: Any])
+        for key in ["displayID", "uniform", "reverse", "intensity", "smoothing", "fps"] {
+            XCTAssertNil(saved[key], key)
+        }
+        XCTAssertFalse(model.busy)
+        XCTAssertNil(model.measuredLamp)
+    }
     func testFocusingRoundedHardwareReadbackDoesNotRequestAnotherWrite() {
         XCTAssertTrue(LampValueInput.isUnchanged("59", current: 58.988764))
         XCTAssertTrue(LampValueInput.isUnchanged("4111", current: 4111.428571))

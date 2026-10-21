@@ -39,8 +39,6 @@ targets:
         product: ALB01Protocol
       - package: ALB01Modules
         product: ALB01HID
-      - package: ALB01Modules
-        product: ALB01ScreenSync
 schemes:
   ALB01Control:
     build:
