@@ -2,9 +2,9 @@
 
 Release build: 0.4.0 (14), October 20, 2026. The published beta 2 archives remain the earlier release.
 
-The desktop layout uses a persistent navigation rail, a schematic monitor/light-bar preview, parallel front/rear controls, and a compact scene strip. Cyan identifies selection and primary actions; device connection uses a separate green indicator. The preview depicts app settings rather than measured optical output.
+The desktop layout uses a persistent navigation rail, a schematic monitor/light-bar preview, parallel front/rear controls, and a compact scene strip. The visual language is an original macOS interpretation of the ALB01 product presentation: near-black hardware surfaces, a restrained ROG-red primary accent, and a warm-to-cool desk-light scale. It does not include ASUS artwork or a copied/proprietary ROG typeface. Instead it uses the macOS system typeface at comfortable, accessible sizes. Device connection uses a separate green indicator. The preview depicts app settings rather than measured optical output.
 
-The minimum content size is 820 × 650 points. Control pairs switch between one and two columns based on available width; scenes wrap. Main controls use 13-point labels, supporting text is at least 11 points, and schematic captions are at least 10 points. Appearance supports System, Light, and Dark; palettes have measured small-text contrast above 4.5:1. Scene selection stages a choice; Apply scene sends it. Front sliders and validated exact-entry fields use the same readback workflow.
+The minimum content size is 820 × 650 points. Control pairs switch between one and two columns based on available width; scenes wrap. Main controls use 13-point labels, supporting text is at least 11 points, and schematic captions are at least 10 points. Technical chamfered panels distinguish controls from the window without turning the app into an imitation gaming launcher. Appearance supports System, Light, and Dark; palettes retain high-contrast text and selection never relies on color alone. Scene selection stages a choice; Apply scene sends it. Front sliders and validated exact-entry fields use the same readback workflow.
 
 Jonathan Hogue is credited in the navigation rail, About content, copyright metadata, and bundled MIT license.
 

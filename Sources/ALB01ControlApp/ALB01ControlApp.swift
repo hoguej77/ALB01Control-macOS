@@ -78,14 +78,14 @@ private struct ControlPanel: View {
             VStack(spacing: 0) {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("LIGHTING CONTROL").font(.system(size: 12, weight: .bold)).tracking(2).foregroundStyle(StudioTheme.muted)
-                        Text(pageTitle).font(.system(size: 28, weight: .semibold, design: .rounded))
+                        Text("ROG AURA  /  ALB01").font(StudioTheme.label(11, weight: .bold)).tracking(2.1).foregroundStyle(StudioTheme.rogRed)
+                        Text(pageTitle).font(StudioTheme.display(28, weight: .bold))
                     }
                     Spacer()
                     HStack(spacing: 7) {
                         Circle().fill(model.connected ? StudioTheme.mint : .orange).frame(width: 6, height: 6)
                         Text(model.connected ? "ALB01 connected" : "Disconnected").font(.system(size: 12, weight: .medium))
-                    }.padding(.horizontal, 12).padding(.vertical, 8).background(StudioTheme.surface, in: Capsule())
+                    }.padding(.horizontal, 12).padding(.vertical, 8).background(StudioTheme.raised, in: Capsule())
                     Button { model.reconnect() } label: { Image(systemName: "arrow.clockwise") }
                         .buttonStyle(StudioButtonStyle()).disabled(model.busy).help("Reconnect light bar").accessibilityLabel("Reconnect light bar")
                 }.padding(.horizontal, 26).padding(.top, 22).padding(.bottom, 18)
@@ -114,9 +114,9 @@ private struct ControlPanel: View {
         }
         .background(StudioTheme.background)
         .foregroundStyle(StudioTheme.text)
-        .tint(StudioTheme.cyan)
+        .tint(StudioTheme.rogRed)
         .preferredColorScheme(appearance == "system" ? nil : (appearance == "light" ? .light : .dark))
-        .font(.system(size: 13))
+        .font(.system(size: 13, design: .default))
         .frame(minWidth: 820, minHeight: 650)
         .confirmationDialog("Erase saved preferences and activity?", isPresented: $confirmErase) {
             Button("Erase app data", role: .destructive) { model.eraseSettings() }
@@ -134,8 +134,8 @@ private struct ControlPanel: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 13) {
                 LightBarMark(connected: model.connected).frame(height: 28)
-                Text("ALB01").font(.system(size: 25, weight: .bold, design: .rounded)).tracking(2)
-                Text("CONTROL FOR macOS").font(.system(size: 12, weight: .semibold)).tracking(1.8).foregroundStyle(StudioTheme.muted)
+                Text("ALB01").font(StudioTheme.display(27, weight: .black)).tracking(1.3)
+                Text("LIGHT BAR CONTROL  /  macOS").font(StudioTheme.label(10, weight: .bold)).tracking(1.6).foregroundStyle(StudioTheme.muted)
             }.padding(.horizontal, 22).padding(.top, 26).padding(.bottom, 32)
             nav("Lighting studio", icon: "slider.horizontal.3", id: "lights")
             nav("Diagnostics", icon: "waveform.path.ecg", id: "diagnostics")
@@ -152,7 +152,7 @@ private struct ControlPanel: View {
                 Link("GitHub ↗", destination: URL(string: "https://github.com/hoguej77/ALB01Control-macOS")!)
                     .font(.system(size: 12)).foregroundStyle(StudioTheme.cyan)
             }.padding(22)
-        }.frame(width: 210).background(StudioTheme.sidebar)
+        }.frame(width: 228).background(StudioTheme.sidebar)
     }
     private func nav(_ title: String, icon: String, id: String) -> some View {
         Button { model.selectedPage = id } label: {
@@ -160,10 +160,10 @@ private struct ControlPanel: View {
                 Image(systemName: icon).font(.system(size: 14)).frame(width: 18)
                 Text(title).font(.system(size: 12, weight: tab == id ? .semibold : .medium)).fixedSize(horizontal: true, vertical: false)
                 Spacer()
-                if tab == id { Capsule().fill(StudioTheme.cyan).frame(width: 3, height: 16) }
+                if tab == id { Rectangle().fill(StudioTheme.rogRed).frame(width: 3, height: 17) }
             }.foregroundStyle(tab == id ? StudioTheme.text : StudioTheme.secondary)
                 .padding(.horizontal, 12).frame(height: 43)
-                .background(tab == id ? StudioTheme.cyan.opacity(0.10) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                .background(tab == id ? StudioTheme.rogRed.opacity(0.12) : .clear, in: ROGPanelShape(cut: 5))
         }.buttonStyle(.plain).accessibilityAddTraits(tab == id ? .isSelected : []).padding(.horizontal, 10).padding(.bottom, 5)
     }
 
@@ -210,7 +210,7 @@ private struct ControlPanel: View {
     private var deskCard: some View {
         ControlCard("Desk light", subtitle: "Front illumination", minimumHeight: 362) {
             HStack(alignment: .firstTextBaseline, spacing: 3) {
-                Text(model.frontOn ? "\(Int(model.settings.brightness.rounded()))" : "OFF").font(.system(size: 38, weight: .regular, design: .rounded)).monospacedDigit()
+                Text(model.frontOn ? "\(Int(model.settings.brightness.rounded()))" : "OFF").font(StudioTheme.display(38, weight: .medium)).monospacedDigit()
                 if model.frontOn { Text("%").font(.system(size: 15)).foregroundStyle(StudioTheme.secondary) }
                 Spacer()
                 Toggle("Desk light power", isOn: Binding(get: { model.frontOn }, set: { model.setPower($0) }))
@@ -226,7 +226,7 @@ private struct ControlPanel: View {
             HStack {
                 Text("WARM 2700 K").foregroundStyle(StudioTheme.secondary)
                 Spacer()
-                Text("COOL 6500 K").foregroundStyle(StudioTheme.cyan)
+                Text("COOL 6500 K").foregroundStyle(StudioTheme.coolWhite)
             }.font(.system(size: 12, weight: .semibold)).tracking(0.6)
             HStack(spacing: 16) {
                 ExactLampValue(title: "Brightness", unit: "%", range: 1...100, value: $model.settings.brightness,
@@ -248,8 +248,8 @@ private struct ControlPanel: View {
             HStack(spacing: 6) {
                 effectButton("Off", .off)
                 effectButton("Solid", .staticColor)
-                effectButton("Breathe", .breathing)
-                effectButton("Rainbow", .spectrum)
+                effectButton("Pulse", .breathing)
+                effectButton("Spectrum", .spectrum)
             }.padding(.vertical, 8)
             HStack {
                 ColorPicker("Light color", selection: Binding(get: { rgb(model.settings.rearColor) }, set: { color in
@@ -289,9 +289,9 @@ private struct ControlPanel: View {
     private func effectButton(_ label: String, _ effect: ALB01Protocol.AuraEffect) -> some View {
         Button { model.settings.rearEffect = effect; model.scheduleRear() } label: {
             Text(label).font(.system(size: 12, weight: .medium)).frame(maxWidth: .infinity).frame(height: 29)
-                .foregroundStyle(model.settings.rearEffect == effect ? StudioTheme.cyan : StudioTheme.secondary)
-                .background(model.settings.rearEffect == effect ? StudioTheme.cyan.opacity(0.12) : StudioTheme.background, in: RoundedRectangle(cornerRadius: 6))
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(model.settings.rearEffect == effect ? StudioTheme.cyan.opacity(0.5) : StudioTheme.line, lineWidth: 1))
+                .foregroundStyle(model.settings.rearEffect == effect ? StudioTheme.text : StudioTheme.secondary)
+                .background(model.settings.rearEffect == effect ? StudioTheme.rogRed.opacity(0.12) : StudioTheme.raised, in: ROGPanelShape(cut: 5))
+                .overlay(ROGPanelShape(cut: 5).stroke(model.settings.rearEffect == effect ? StudioTheme.rogRed : StudioTheme.line, lineWidth: 1))
         }.buttonStyle(.plain).accessibilityAddTraits(model.settings.rearEffect == effect ? .isSelected : [])
     }
     private func lampEditing(_ editing: Bool) {

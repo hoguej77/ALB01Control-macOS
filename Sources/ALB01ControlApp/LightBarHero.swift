@@ -21,9 +21,9 @@ struct LightBarHero: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("ASUS ALB01").font(.system(size: 10, weight: .bold)).tracking(2).foregroundStyle(StudioTheme.cyan)
-                Text("Monitor Light Bar").font(.system(size: 21, weight: .medium, design: .rounded))
-                Text("ALB01  /  USB").font(.system(size: 10, design: .monospaced)).foregroundStyle(StudioTheme.secondary)
+                Text("ROG AURA MONITOR LIGHT BAR").font(StudioTheme.label(10, weight: .bold)).tracking(1.7).foregroundStyle(StudioTheme.rogRed)
+                Text("Asymmetrical desk light").font(StudioTheme.display(21, weight: .semibold))
+                Text("ALB01  /  USB HID  /  LOCAL CONTROL").font(.system(size: 10, design: .monospaced)).foregroundStyle(StudioTheme.secondary)
                 HStack(spacing: 8) {
                     metric("DESK", !connected ? "—" : frontOn ? "\(Int(brightness))%" : "Off")
                     metric("AMBIENT", effectName)
@@ -34,9 +34,9 @@ struct LightBarHero: View {
                 let w = min(geometry.size.width - 30, 300)
                 ZStack {
                     if connected && rearKnown && effect != .off {
-                        Ellipse().fill((effect == .spectrum ? StudioTheme.cyan : aura).opacity(0.3)).frame(width: w + 12, height: 90).offset(y: -4)
+                        Ellipse().fill((effect == .spectrum ? StudioTheme.rogRed : aura).opacity(0.32)).frame(width: w + 12, height: 90).offset(y: -4)
                     }
-                    RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.035, green: 0.05, blue: 0.07))
+                    RoundedRectangle(cornerRadius: 4).fill(Color(red: 0.025, green: 0.027, blue: 0.035))
                         .overlay(RoundedRectangle(cornerRadius: 7).stroke(LinearGradient(colors: [.white.opacity(0.19), .white.opacity(0.025)], startPoint: .top, endPoint: .bottom), lineWidth: 1))
                         .frame(width: w, height: 104).offset(y: 12)
                     if frontOn {
@@ -44,7 +44,7 @@ struct LightBarHero: View {
                             .frame(width: w - 22, height: 88).offset(y: 18)
                     }
                     VStack(spacing: 0) {
-                        Capsule().fill(LinearGradient(colors: [Color(white: 0.20), Color(white: 0.10), Color(white: 0.25)], startPoint: .top, endPoint: .bottom))
+                        Capsule().fill(LinearGradient(colors: [Color(white: 0.24), Color(white: 0.07), Color(white: 0.18)], startPoint: .top, endPoint: .bottom))
                             .overlay(Capsule().stroke(.white.opacity(0.26), lineWidth: 0.7)).frame(width: w + 10, height: 13)
                             .overlay(alignment: .bottom) { Capsule().fill(frontOn ? warmth : .white.opacity(0.1)).frame(width: w - 16, height: 2).shadow(color: frontOn ? warmth.opacity(0.9) : .clear, radius: 5) }
                         RoundedRectangle(cornerRadius: 2).fill(Color(white: 0.22)).frame(width: 28, height: 6)
@@ -54,9 +54,10 @@ struct LightBarHero: View {
             }.frame(width: 255, height: 145).accessibilityHidden(true)
         }
         .padding(.horizontal, 22).padding(.vertical, 12)
-        .background(LinearGradient(colors: [StudioTheme.surface, StudioTheme.background], startPoint: .leading, endPoint: .trailing), in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(StudioTheme.line, lineWidth: 1))
-        .overlay(alignment: .topTrailing) { Text("LIGHTING PREVIEW").font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(StudioTheme.muted).padding(12) }
+        .background(LinearGradient(colors: [StudioTheme.surface, StudioTheme.background], startPoint: .leading, endPoint: .trailing), in: ROGPanelShape(cut: 12))
+        .overlay(ROGPanelShape(cut: 12).stroke(StudioTheme.line, lineWidth: 1))
+        .overlay(alignment: .topLeading) { Rectangle().fill(StudioTheme.rogRed).frame(width: 42, height: 2).padding(.leading, 22) }
+        .overlay(alignment: .topTrailing) { Text("LIVE LIGHT MAP").font(StudioTheme.label(10, weight: .bold)).tracking(1).foregroundStyle(StudioTheme.muted).padding(12) }
     }
     private func metric(_ title: String, _ value: String) -> some View {
         VStack(alignment: .leading, spacing: 3) {

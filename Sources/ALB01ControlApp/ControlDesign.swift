@@ -3,17 +3,33 @@ import AppKit
 import ALB01Protocol
 
 enum StudioTheme {
-    static let background = adaptive(light: 0xF2F4F7, dark: 0x0E1116)
-    static let sidebar = adaptive(light: 0xE8EDF2, dark: 0x131720)
-    static let surface = adaptive(light: 0xFFFFFF, dark: 0x191F29)
-    static let line = adaptive(light: 0xB5BFCC, dark: 0x4B586B)
-    static let text = Color(nsColor: .labelColor)
-    static let secondary = adaptive(light: 0x48556A, dark: 0xB2BDCE)
-    static let muted = adaptive(light: 0x546177, dark: 0x9EACC1)
-    static let cyan = adaptive(light: 0x006B7C, dark: 0x4AD9EB)
+    // Original interface tokens inspired by the ALB01's black hardware and ROG's
+    // restrained red energy. They are not copied ASUS design assets or typefaces.
+    static let background = adaptive(light: 0xF4F3F1, dark: 0x08090C)
+    static let sidebar = adaptive(light: 0xE8E6E4, dark: 0x0D0E12)
+    static let surface = adaptive(light: 0xFFFFFF, dark: 0x15171D)
+    static let raised = adaptive(light: 0xF0EEEC, dark: 0x1B1E25)
+    static let line = adaptive(light: 0xC7C0BD, dark: 0x30343D)
+    static let text = adaptive(light: 0x151313, dark: 0xF5F1EE)
+    static let secondary = adaptive(light: 0x5E5652, dark: 0xB7B0AD)
+    static let muted = adaptive(light: 0x756D68, dark: 0x8E8988)
+    static let rogRed = adaptive(light: 0xB4001E, dark: 0xFF1744)
+    static let ember = adaptive(light: 0xD63A1F, dark: 0xFF5D3D)
+    static let coolWhite = adaptive(light: 0x005C84, dark: 0x7EDBFF)
+    /// Compatibility name for controls that use the primary accent. New views
+    /// should use `rogRed` so the intent is explicit.
+    static let cyan = rogRed
     static let mint = adaptive(light: 0x176E4C, dark: 0x5CDBA8)
-    static let accentFill = adaptive(light: 0x006B7C, dark: 0x4AD9EB)
-    static let onAccent = adaptive(light: 0xFFFFFF, dark: 0x0E1116)
+    static let accentFill = rogRed
+    static let onAccent = Color.white
+
+    static func display(_ size: CGFloat, weight: Font.Weight = .semibold) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+
+    static func label(_ size: CGFloat = 11, weight: Font.Weight = .semibold) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
 
     private static func adaptive(light: UInt32, dark: UInt32) -> Color {
         Color(nsColor: NSColor(name: nil) { appearance in
@@ -27,17 +43,37 @@ enum StudioTheme {
     }
 }
 
+/// A quiet technical chamfer gives the app a hardware-inspired hierarchy without
+/// imitating ASUS UI artwork or relying on a gaming font.
+struct ROGPanelShape: Shape {
+    var cut: CGFloat = 8
+    func path(in rect: CGRect) -> Path {
+        let c = min(cut, min(rect.width, rect.height) / 2)
+        return Path { path in
+            path.move(to: CGPoint(x: c, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX - c, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + c))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - c))
+            path.addLine(to: CGPoint(x: rect.maxX - c, y: rect.maxY))
+            path.addLine(to: CGPoint(x: c, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - c))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + c))
+            path.closeSubpath()
+        }
+    }
+}
+
 struct StudioButtonStyle: ButtonStyle {
     var prominent = false
     @Environment(\.isEnabled) private var enabled
     @Environment(\.isFocused) private var focused
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label.font(.system(size: 12, weight: .semibold))
+        configuration.label.font(StudioTheme.label(12, weight: .semibold))
             .padding(.horizontal, 12).frame(height: 34)
             .foregroundStyle(prominent ? StudioTheme.onAccent : StudioTheme.text)
-            .background(prominent ? StudioTheme.accentFill : StudioTheme.background, in: RoundedRectangle(cornerRadius: 7))
-            .overlay(RoundedRectangle(cornerRadius: 7).stroke(prominent ? .clear : StudioTheme.line, lineWidth: 1))
-            .overlay(RoundedRectangle(cornerRadius: 9).stroke(focused ? StudioTheme.cyan : .clear, lineWidth: 2).padding(-3))
+            .background(prominent ? StudioTheme.accentFill : StudioTheme.raised, in: ROGPanelShape(cut: 5))
+            .overlay(ROGPanelShape(cut: 5).stroke(prominent ? StudioTheme.rogRed.opacity(0.55) : StudioTheme.line, lineWidth: 1))
+            .overlay(ROGPanelShape(cut: 7).stroke(focused ? StudioTheme.rogRed : .clear, lineWidth: 2).padding(-3))
             .opacity(enabled ? (configuration.isPressed ? 0.8 : 1) : 0.4)
     }
 }
@@ -54,14 +90,17 @@ struct ControlCard<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.system(size: 16, weight: .semibold))
+                Text(title).font(StudioTheme.display(16, weight: .semibold))
                 if let subtitle { Text(subtitle).font(.system(size: 13)).foregroundStyle(StudioTheme.secondary) }
             }
             content()
         }
         .padding(18).frame(maxWidth: .infinity, minHeight: minimumHeight, alignment: .topLeading)
-        .background(StudioTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(StudioTheme.line, lineWidth: contrast == .increased ? 2 : 0.7))
+        .background(StudioTheme.surface, in: ROGPanelShape(cut: 10))
+        .overlay(ROGPanelShape(cut: 10).stroke(StudioTheme.line, lineWidth: contrast == .increased ? 2 : 0.7))
+        .overlay(alignment: .topLeading) {
+            Rectangle().fill(StudioTheme.rogRed).frame(width: 28, height: 2).padding(.leading, 18)
+        }
     }
 }
 
@@ -74,7 +113,7 @@ struct ControlSlider<Content: View>: View {
             HStack {
                 Text(title).font(.system(size: 13))
                 Spacer()
-                Text(value).font(.system(size: 13, weight: .medium, design: .monospaced)).foregroundStyle(StudioTheme.cyan)
+                Text(value).font(.system(size: 13, weight: .medium, design: .monospaced)).foregroundStyle(StudioTheme.rogRed)
             }
             control().controlSize(.regular)
         }
@@ -122,11 +161,11 @@ struct PresetTile: View {
             Image(systemName: icon).font(.system(size: 18, weight: .regular))
             Text(preset.name.replacingOccurrences(of: "User Mode ", with: "User ")).font(.system(size: 12, weight: .medium)).lineLimit(2).multilineTextAlignment(.center)
         }
-        .foregroundStyle(selected ? StudioTheme.cyan : StudioTheme.secondary)
+        .foregroundStyle(selected ? StudioTheme.text : StudioTheme.secondary)
         .frame(maxWidth: .infinity).frame(height: 80)
-        .background(selected ? StudioTheme.cyan.opacity(0.08) : StudioTheme.background, in: RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(selected ? StudioTheme.cyan.opacity(0.7) : StudioTheme.line, lineWidth: 1))
-        .contentShape(RoundedRectangle(cornerRadius: 8))
+        .background(selected ? StudioTheme.rogRed.opacity(0.12) : StudioTheme.raised, in: ROGPanelShape(cut: 6))
+        .overlay(ROGPanelShape(cut: 6).stroke(selected ? StudioTheme.rogRed : StudioTheme.line, lineWidth: 1))
+        .contentShape(ROGPanelShape(cut: 6))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(preset.name) scene")
         .accessibilityValue(selected ? "Selected for preview; choose Apply scene to activate" : "Not selected")
