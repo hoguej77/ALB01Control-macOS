@@ -65,7 +65,7 @@ The app does not seize the HID device. Authorization is tied to the registry ins
 
 ## Lighting only — no screen capture
 
-Screen Sync, screen-color sampling, display selection, frame counters, capture-rate options, and calibration were removed in 0.4.0 (14). The app does not link ScreenCaptureKit, request Screen Recording permission, enumerate displays, inspect Safari, or track monitor refresh rate. Its three-second readback checks only the USB light bar, not the screen or GPU.
+Screen Sync, screen-color sampling, display selection, frame counters, capture-rate options, and calibration were removed in 0.4.0 (15). The app does not link ScreenCaptureKit, request Screen Recording permission, enumerate displays, inspect Safari, or track monitor refresh rate. Its three-second readback checks only the USB light bar, not the screen or GPU.
 
 The user reported Safari video turning black while the earlier app was open and returning after it quit. This is evidence of an interaction, not a verified root cause. The capture implementation remains available in Git history for a separately researched and profiled future version; it is not shipped as a hidden toggle.
 

@@ -1,6 +1,6 @@
 # Lighting Studio preview
 
-Release build: 0.4.0 (14), October 20, 2026. The published beta 2 archives remain the earlier release.
+Release candidate: 0.4.0 (15), October 20, 2026. The published beta 2 draft is intentionally held because its archive predates the visual refinement.
 
 The desktop layout uses a persistent navigation rail, a schematic monitor/light-bar preview, parallel front/rear controls, and a compact scene strip. The visual language is an original macOS interpretation of the ALB01 product presentation: near-black hardware surfaces, a restrained ROG-red primary accent, and a warm-to-cool desk-light scale. It does not include ASUS artwork or a copied/proprietary ROG typeface. Instead it uses the macOS system typeface at comfortable, accessible sizes. Device connection uses a separate green indicator. The preview depicts app settings rather than measured optical output.
 

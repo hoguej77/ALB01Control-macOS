@@ -1,6 +1,6 @@
 # Validation status
 
-Current release: v0.4.0-beta.2 / app 0.4.0 (14), October 20, 2026.
+Current release candidate: v0.4.0-beta.3 / app 0.4.0 (15), October 20, 2026.
 
 ## Lighting-only scope
 

@@ -1,9 +1,10 @@
-# ALB01Control for macOS — v0.4.0-beta.2
+# ALB01Control for macOS — v0.4.0-beta.3
 
 An independent native Swift/SwiftUI controller for the ASUS ALB01 monitor light bar. Created by Jonathan Hogue; original code is MIT licensed. Not affiliated with or endorsed by ASUS.
 
 ## New in Lighting Studio
 
+- Refined the visual system around the ALB01 hardware and ROG product presentation: near-black surfaces, restrained ROG-red action states, warm-to-cool light cues, technical panel geometry, and the readable macOS system typeface. This is an independent design, not a copied ASUS UI or proprietary ROG font.
 - Redesigned window with a navigation rail, light-bar/monitor preview, paired desk and ambient controls, and a light-bar menu icon.
 - Focus, Daylight, Evening, Cinema, Ambient, and two custom scenes. Existing customized values are preserved. Scene names describe activities rather than promising PC Armoury Crate parity.
 - Match desk warmth: a complementary soft solid backlight. It is an aesthetic palette, not calibrated white-point matching.
@@ -13,11 +14,11 @@ An independent native Swift/SwiftUI controller for the ASUS ALB01 monitor light 
 
 ## Downloads and installation
 
-- **ALB01Control-v0.4.0-beta.2-macos-arm64.zip** — Apple Silicon app; macOS 14+ deployment target. Extract and move ALB01Control.app to Applications.
-- **ALB01Control-v0.4.0-beta.2-source.zip** — matching source, Xcode project, tests, documentation, and MIT license.
+- **ALB01Control-v0.4.0-beta.3-macos-arm64.zip** — Apple Silicon app; macOS 14+ deployment target. Extract and move ALB01Control.app to Applications.
+- **ALB01Control-v0.4.0-beta.3-source.zip** — matching source, Xcode project, tests, documentation, and MIT license.
 - **SHA256SUMS.txt** — checksums for both ZIPs.
 
-The app identifies as **0.4.0 (14)**. It is ad-hoc signed, **not Developer ID signed or Apple-notarized**. macOS may block it; review the source, checksum, and README before approving a per-app exception. Do not disable system security protections. No Intel binary is included.
+The app identifies as **0.4.0 (15)**. It is ad-hoc signed, **not Developer ID signed or Apple-notarized**. macOS may block it; review the source, checksum, and README before approving a per-app exception. Do not disable system security protections. No Intel binary is included.
 
 ## Validation and important limitations
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0-beta.3 — 2026-10-20
+
+- Reworked the lighting interface around an original ALB01/ROG-inspired visual system: black hardware surfaces, restrained red action states, warm/cool desk-light cues, technical chamfered panels, and macOS system typography.
+- Replaced rounded display styling and cyan-first controls. The interface does not copy ASUS artwork or bundle an unlicensed proprietary ROG typeface.
+- Renamed the rear `Breathe` affordance to `Pulse` and `Rainbow` to `Spectrum`; these remain the same documented hardware effects.
+- App version 0.4.0 (15); all 27 automated tests pass.
+
 ## 0.4.0-beta.2 — 2026-10-20
 
 - Removed Screen Sync, its capture engine/dependency, sampling queues, display enumeration, permissions, frame counters, rate settings, and calibration. Older customized lighting values survive migration. Capture remains in Git history for future research, not in this release.
